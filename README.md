@@ -1,5 +1,7 @@
 # Err
 
+[![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err)
+
 A logs router that can pop messages to the device's screen.
 
 ## Configuration
