@@ -45,8 +45,8 @@ Available flash messages:
 The regular messages are snackbar messages. They need a `BuildContext`:
 
    ```dart
-   logger.info(msg: "File uploaded in $elapsed s").then((msg) {
-      msg.show(context);
+   logger.info(msg: "File uploaded in $elapsed s").then((err) {
+      err.show(context);
    });
    ```
 
