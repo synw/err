@@ -314,7 +314,9 @@ class Err {
   final Flushbar flushbar;
   final ShortToast toast;
 
-  /// The show method to pop the message on screen
+  /// The show method to pop the message on screen if needed.
+  /// A [BuildContext] is required only for [Flushbar] messages,
+  /// not the flash messages that use [Toast]
   show([BuildContext context]) {
     if (toast != null) {
       toast.show();
