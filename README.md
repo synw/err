@@ -83,6 +83,16 @@ stay until dismissed
 
 ![Screenshot](img/terminal.png)
 
+By default the terminal output is configured for black and white. If your terminal supports colorized unicode emoticons use this parameter:
+
+   ```dart
+   var logger = ErrRouter(
+      // ...
+      terminalColors: true);
+   ```
+
+![Screenshot](img/terminal_colors.png)
+
 ## Libraries used
 
 - [Flutter toast](https://pub.dartlang.org/packages/fluttertoast)

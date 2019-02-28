@@ -15,7 +15,8 @@ class ErrRouter {
       this.errorRoute,
       this.warningRoute,
       this.infoRoute,
-      this.debugRoute}) {
+      this.debugRoute,
+      this.terminalColors = false}) {
     criticalRoute = criticalRoute ?? [ErrRoute.console];
     errorRoute = errorRoute ?? [ErrRoute.console];
     warningRoute = warningRoute ?? [ErrRoute.console];
@@ -35,6 +36,7 @@ class ErrRouter {
   List<ErrRoute> warningRoute;
   List<ErrRoute> infoRoute;
   List<ErrRoute> debugRoute;
+  bool terminalColors;
 
   Map<ErrType, List<ErrRoute>> _errorRoutes;
 
@@ -162,19 +164,27 @@ class ErrRouter {
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
         String endStr;
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
-        print("✖️✖️✖️ CRITICAL: $_errMsg$endStr");
+        String icon;
+        terminalColors ? icon = "✖️ " : icon = "✖️✖️✖️";
+        print("$icon CRITICAL: $_errMsg$endStr");
         break;
       case ErrType.error:
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
         String endStr;
+        String icon;
+        terminalColors ? icon = "🔴" : icon = "⏺⏺⏺";
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
-        print("⏺⏺⏺ ERROR: $_errMsg$endStr");
+        print("$icon ERROR: $_errMsg$endStr");
         break;
       case ErrType.warning:
-        print("⏹ ⚠️ WARNING: $_errMsg");
+        String icon;
+        terminalColors ? icon = "⚠️ " : icon = "⏹ ⚠️";
+        print("$icon WARNING: $_errMsg");
         break;
       case ErrType.info:
-        print("▶️ INFO: $_errMsg");
+        String icon;
+        terminalColors ? icon = "🔔" : icon = "▶️";
+        print("$icon INFO: $_errMsg");
         break;
       case ErrType.debug:
         print("📞 DEBUG: $_errMsg");
