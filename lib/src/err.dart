@@ -139,10 +139,7 @@ class ErrRouter {
       return Err();
     }
     if (_errorRoutes[_errType].contains(ErrRoute.console)) {
-      print("============ $_errTypeStr ============");
-      print(_errMsg);
-      if (_errType == ErrType.critical || _errType == ErrType.error)
-        print("====================================");
+      _printErr(_errType, _errMsg);
     }
     if (_errorRoutes[_errType].contains(ErrRoute.screen)) {
       switch (flash) {
@@ -157,6 +154,34 @@ class ErrRouter {
       return Err(flushbar: _buildFlushbar(_errType, _errMsg, short: short));
     }
     return Err();
+  }
+
+  _printErr(ErrType _errType, String _errMsg) {
+    switch (_errType) {
+      case ErrType.critical:
+        bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
+        String endStr;
+        hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
+        print("✖️✖️✖️ CRITICAL: $_errMsg$endStr");
+        break;
+      case ErrType.error:
+        bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
+        String endStr;
+        hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
+        print("⏺⏺⏺ ERROR: $_errMsg$endStr");
+        break;
+      case ErrType.warning:
+        print("⏹ ⚠️ WARNING: $_errMsg");
+        break;
+      case ErrType.info:
+        print("▶️ INFO: $_errMsg");
+        break;
+      case ErrType.debug:
+        print("📞 DEBUG: $_errMsg");
+        break;
+      default:
+        print("$_errMsg");
+    }
   }
 
   Flushbar _buildFlushbar(ErrType _errType, String _errMsg,
