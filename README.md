@@ -56,6 +56,9 @@ The regular messages are snackbar messages. They need a `BuildContext`
    // or
 
    Err err = await logger.info(msg: "File uploaded in $elapsed s");
+   // if (err != nil) // hi Go!  Not needed here
+   // because the show method will do nothing in case
+   // of console route, it's used only to print on screen
    err.show(context);
    ```
 
