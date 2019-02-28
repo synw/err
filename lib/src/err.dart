@@ -132,7 +132,6 @@ class ErrRouter {
 
   Err _dispatch(ErrType _errType, String _message, dynamic _errorOrException,
       {bool short = false, bool flash = false}) {
-    String _errTypeStr = _getErrTypeString(_errType).toUpperCase();
     String _errMsg = _getErrMessage(
       _message,
       _errorOrException,
