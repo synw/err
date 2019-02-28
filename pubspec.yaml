@@ -1,5 +1,5 @@
 name: err
-author: synw <synwe@yahoo.com>
+author: synw <ansterj@gmail.com>
 description: A logs router that can pop messages to the device screen. The routes are configurable for each log level.
 homepage: https://github.com/synw/err
 
