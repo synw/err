@@ -87,13 +87,6 @@ class _MyHomePageState extends State<MyHomePage> {
                         err.show(context);
                       }),
                 ),
-                IconButton(
-                  icon: Icon(Icons.refresh, color: Colors.grey, size: 55.0),
-                  onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(builder: (BuildContext context) {
-                        return MyHomePage();
-                      })),
-                )
               ],
             )));
   }
