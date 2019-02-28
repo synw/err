@@ -52,6 +52,11 @@ The regular messages are snackbar messages. They need a `BuildContext`
    logger.info(msg: "File uploaded in $elapsed s").then((err) {
       err.show(context);
    });
+
+   // or
+
+   Err err = await logger.info(msg: "File uploaded in $elapsed s");
+   err.show(context);
    ```
 
 Available messages:
