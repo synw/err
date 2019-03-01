@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       try {
                         _doWrong();
                       } catch (e) {
-                        logger.criticalErr(
+                        logger.criticalErrSync(
                             msg: "Something went really wrong",
                             err: e,
                             context: context);

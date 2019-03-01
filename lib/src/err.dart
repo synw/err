@@ -41,11 +41,28 @@ class ErrRouter {
   Map<ErrType, List<ErrRoute>> _errorRoutes;
 
   /// A critical error from a message. Will stay on screen until dismissed.
+  void criticalSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.critical, context, msg: msg);
+  }
+
+  /// A critical error from a message. Will stay on screen until dismissed.
   Future<void> critical(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.critical, context, msg: msg);
+  }
+
+  /// A critical error from an error or exception.
+  /// Will stay on screen until dismissed.
+  void criticalErrSync({String msg, dynamic err, BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.critical, context, errorOrException: err);
   }
 
   /// A critical error from an error or exception.
@@ -59,11 +76,28 @@ class ErrRouter {
   }
 
   /// An error from a message. Will stay on screen until dismissed.
+  void errorSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.error, context, msg: msg);
+  }
+
+  /// An error from a message. Will stay on screen until dismissed.
   Future<void> error(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.error, context, msg: msg);
+  }
+
+  /// An error from an error or exception.
+  /// Will stay on screen until dismissed.
+  void errorErrSync({String msg, dynamic err, BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.error, context, errorOrException: err);
   }
 
   /// An error from an error or exception.
@@ -76,11 +110,28 @@ class ErrRouter {
   }
 
   /// A warning from a message. Will stay on the screen until dismissed
+  void warningSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, msg: msg);
+  }
+
+  /// A warning from a message. Will stay on the screen until dismissed
   Future<void> warning(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, context, msg: msg);
+  }
+
+  /// A warning from an error or exception.
+  /// Will stay on the screen until dismissed
+  void warningErrSync({String msg, dynamic err, BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, errorOrException: err);
   }
 
   /// A warning from an error or exception.
@@ -94,11 +145,28 @@ class ErrRouter {
   }
 
   /// A warning from a message. Will stay on the screen for 3 seconds
+  void warningShortSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, msg: msg, short: true);
+  }
+
+  /// A warning from a message. Will stay on the screen for 3 seconds
   Future<void> warningShort(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, context, msg: msg, short: true);
+  }
+
+  /// A warning from an error or exception.
+  /// Will stay on the screen for 3 seconds
+  void warningErrShortSync(dynamic err, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, errorOrException: err, short: true);
   }
 
   /// A warning from an error or exception.
@@ -111,6 +179,14 @@ class ErrRouter {
   }
 
   /// An info from a message. Will stay on the screen for 3 seconds
+  void infoSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.info, context, msg: msg, short: true);
+  }
+
+  /// An info from a message. Will stay on the screen for 3 seconds
   Future<void> info(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
@@ -119,11 +195,27 @@ class ErrRouter {
   }
 
   /// An info flash from a message. Will stay on the screen for 1 second
+  void infoFlashSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.info, context, msg: msg, flash: true);
+  }
+
+  /// An info flash from a message. Will stay on the screen for 1 second
   Future<void> infoFlash(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.info, context, msg: msg, flash: true);
+  }
+
+  /// An debug message from a message. Will stay on the screen for 3 seconds
+  void debugSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.debug, context, msg: msg, short: true);
   }
 
   /// An debug message from a message. Will stay on the screen for 3 seconds
@@ -136,6 +228,15 @@ class ErrRouter {
 
   /// An debug flash message from a message.
   /// Will stay on the screen for 1 second
+  void debugFlashSync(String msg, {BuildContext context}) {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.debug, context, msg: msg, flash: true);
+  }
+
+  /// An debug flash message from a message.
+  /// Will stay on the screen for 1 second
   Future<void> debugFlash(String msg, {BuildContext context}) async {
     /// A [context] is required if the message goes to screen
     /// and is not a flash message
@@ -143,11 +244,11 @@ class ErrRouter {
     _dispatch(ErrType.debug, context, msg: msg, flash: true);
   }
 
-  Future<void> _dispatch(ErrType _errType, BuildContext context,
+  void _dispatch(ErrType _errType, BuildContext context,
       {String msg,
       dynamic errorOrException,
       bool short = false,
-      bool flash = false}) async {
+      bool flash = false}) {
     String _errMsg = _getErrMessage(
       msg,
       errorOrException,
@@ -162,19 +263,19 @@ class ErrRouter {
       if (flash == false && context == null)
         throw ArgumentError(
             "You must provide a context if your message is not flash");
-      Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
+      _Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
           short: short, flash: flash);
-      await _popMsg(err: err, context: context);
+      _popMsg(err: err, context: context);
     }
   }
 
-  Err _buildScreenMessage(
+  _Err _buildScreenMessage(
       ErrType _errType, String _errMsg, dynamic _errorOrException,
       {bool short = false, bool flash = false}) {
     switch (flash) {
       case true:
         var colors = _getColors(_errType);
-        return Err(
+        return _Err(
             msg: _errMsg,
             type: _errType,
             toast: ShortToast(
@@ -182,13 +283,13 @@ class ErrRouter {
                 backgroundColor: colors["background_color"],
                 textColor: colors["text_color"]));
     }
-    return Err(
+    return _Err(
         msg: _errMsg,
         type: _errType,
         flushbar: _buildFlushbar(_errType, _errMsg, short: short));
   }
 
-  Future<void> _popMsg({Err err, BuildContext context}) async {
+  void _popMsg({_Err err, BuildContext context}) {
     switch (err.flushbar != null) {
       case true:
         err.show(context);
@@ -198,7 +299,7 @@ class ErrRouter {
     }
   }
 
-  _printErr(ErrType _errType, String _errMsg) async {
+  void _printErr(ErrType _errType, String _errMsg) {
     switch (_errType) {
       case ErrType.critical:
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
@@ -347,10 +448,8 @@ class ErrRouter {
   }
 }
 
-/// The err return object used by [show] : either a [Flushbar], a
-/// [Toast] or nothing
-class Err {
-  Err({@required this.msg, @required this.type, this.flushbar, this.toast});
+class _Err {
+  _Err({@required this.msg, @required this.type, this.flushbar, this.toast});
 
   final Flushbar flushbar;
   final ShortToast toast;
