@@ -1,16 +1,93 @@
-# example
+# Example
 
-A new Flutter project.
+   ```dart
+import 'package:flutter/material.dart';
 
-## Getting Started
+void main() => runApp(MyApp());
 
-This project is a starting point for a Flutter application.
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Err example',
+      home: MyHomePage(),
+    );
+  }
+}
 
-A few resources to get you started if this is your first Flutter project:
+class _MyHomePageState extends State<MyHomePage> {
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
+var logger = ErrRouter(
+    criticalRoute: [ErrRoute.console, ErrRoute.screen],
+    errorRoute: [ErrRoute.screen, ErrRoute.console],
+    warningRoute: [ErrRoute.screen, ErrRoute.console],
+    infoRoute: [ErrRoute.screen, ErrRoute.console],
+    debugRoute: [ErrRoute.screen, ErrRoute.console]);
 
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
+  @override
+  void initState() {
+    logger.debugFlash("Init state");
+    super.initState();
+  }
+
+  bool firstBuildDone = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!firstBuildDone)
+      logger.debugFlash("First build").then((_) {
+        firstBuildDone = true;
+      });
+    return Scaffold(
+        body: Padding(
+            padding: EdgeInsets.all(25.0),
+            child: ListView(
+              children: <Widget>[
+                RaisedButton(
+                  child: Text("Info flash message"),
+                  onPressed: () => logger.infoFlash("An info flash message"),
+                ),
+                RaisedButton(
+                    child: Text("Info regular message"),
+                    onPressed: () =>
+                        logger.info("An info message", context: context)),
+                RaisedButton(
+                    child: Text("Warning message"),
+                    onPressed: () => logger.warning("Hey, this is warning!",
+                        context: context)),
+                RaisedButton(
+                    child: Text("Error message"),
+                    onPressed: () =>
+                        logger.error("Something went wrong", context: context)),
+                RaisedButton(
+                    child: Text("Critical message from exception"),
+                    onPressed: () {
+                      try {
+                        _doWrong();
+                      } catch (e) {
+                        logger.criticalErr(
+                            msg: "Something went really wrong",
+                            err: e,
+                            context: context);
+                      }
+                    }),
+                RaisedButton(
+                    child: Text("Debug message"),
+                    onPressed: () =>
+                        logger.debug("Debug info message", context: context)),
+              ],
+            )));
+  }
+
+  _doWrong() {
+    List<String> li;
+    li.add("wrong");
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+   ```
