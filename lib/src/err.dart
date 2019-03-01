@@ -40,124 +40,165 @@ class ErrRouter {
 
   Map<ErrType, List<ErrRoute>> _errorRoutes;
 
-  /// A critical error. Will stay on screen until dismissed. Needs a context
-  /// to be shown on screen
-  Future<Err> critical({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a critical msg");
-    ErrType _errType = ErrType.critical;
-    return _dispatch(_errType, msg, errorOrException);
+  /// A critical error from a message. Will stay on screen until dismissed.
+  Future<void> critical(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.critical, context, msg: msg);
   }
 
-  /// An error. Will stay on screen until dismissed. Needs a context
-  /// to be shown on screen
-  Future<Err> error({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build an error");
-    ErrType _errType = ErrType.error;
-    return _dispatch(_errType, msg, errorOrException);
+  /// A critical error from an error or exception.
+  /// Will stay on screen until dismissed.
+  Future<void> criticalErr(
+      {String msg, dynamic err, BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.critical, context, errorOrException: err);
   }
 
-  /// A warning. Will stay on screen for 3 seconds. Needs a context
-  /// to be shown on screen
-  Future<Err> warning({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a warning");
-    ErrType _errType = ErrType.warning;
-    return _dispatch(_errType, msg, errorOrException, short: true);
+  /// An error from a message. Will stay on screen until dismissed.
+  Future<void> error(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.error, context, msg: msg);
   }
 
-  /// A warning. Will stay on screen until dismissed. Needs a context
-  /// to be shown on screen
-  Future<Err> warningLong({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a warning");
-    ErrType _errType = ErrType.warning;
-    return _dispatch(_errType, msg, errorOrException);
+  /// An error from an error or exception.
+  /// Will stay on screen until dismissed.
+  Future<void> errorErr({String msg, dynamic err, BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.error, context, errorOrException: err);
   }
 
-  /// An info message. Will stay on screen for 3 seconds. Needs a context
-  /// to be shown on screen
-  Future<Err> info({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build an info msg");
-    ErrType _errType = ErrType.info;
-    return _dispatch(_errType, msg, errorOrException, short: true);
+  /// A warning from a message. Will stay on the screen until dismissed
+  Future<void> warning(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, msg: msg);
   }
 
-  /// A flash info message. Will stay on screen for 1 second. Does not need
-  /// a context to be shown
-  Future<Err> infoFlash({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build an info msg");
-    ErrType _errType = ErrType.info;
-    return _dispatch(_errType, msg, errorOrException, flash: true);
+  /// A warning from an error or exception.
+  /// Will stay on the screen until dismissed
+  Future<void> warningErr(
+      {String msg, dynamic err, BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null && msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, errorOrException: err);
   }
 
-  /// A debug message. Will stay on screen for 3 seconds. Needs a context
-  /// to be shown on screen
-  Future<Err> debug({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a debug msg");
-    ErrType _errType = ErrType.debug;
-    return _dispatch(_errType, msg, errorOrException, short: true);
+  /// A warning from a message. Will stay on the screen for 3 seconds
+  Future<void> warningShort(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, msg: msg, short: true);
   }
 
-  /// A debug message. Will stay on screen until dismissed. Needs a context
-  /// to be shown on screen
-  Future<Err> debugLong({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a debug msg");
-    ErrType _errType = ErrType.debug;
-    return _dispatch(_errType, msg, errorOrException);
+  /// A warning from an error or exception.
+  /// Will stay on the screen for 3 seconds
+  Future<void> warningErrShort(dynamic err, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (err == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.warning, context, errorOrException: err, short: true);
   }
 
-  /// A flash info message. Will stay on screen for 1 second. Does not need
-  /// a context to be shown
-  Future<Err> debugFlash({String msg, dynamic errorOrException}) async {
-    if (msg == null && errorOrException == null)
-      throw ArgumentError(
-          "You must provide either an errorOrException or a msg to build a debug msg");
-    ErrType _errType = ErrType.debug;
-    return _dispatch(_errType, msg, errorOrException, flash: true);
+  /// An info from a message. Will stay on the screen for 3 seconds
+  Future<void> info(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.info, context, msg: msg, short: true);
   }
 
-  Err _dispatch(ErrType _errType, String _message, dynamic _errorOrException,
-      {bool short = false, bool flash = false}) {
+  /// An info flash from a message. Will stay on the screen for 1 second
+  Future<void> infoFlash(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.info, context, msg: msg, flash: true);
+  }
+
+  /// An debug message from a message. Will stay on the screen for 3 seconds
+  Future<void> debug(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.debug, context, msg: msg, short: true);
+  }
+
+  /// An debug flash message from a message.
+  /// Will stay on the screen for 1 second
+  Future<void> debugFlash(String msg, {BuildContext context}) async {
+    /// A [context] is required if the message goes to screen
+    /// and is not a flash message
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.debug, context, msg: msg, flash: true);
+  }
+
+  Future<void> _dispatch(ErrType _errType, BuildContext context,
+      {String msg,
+      dynamic errorOrException,
+      bool short = false,
+      bool flash = false}) async {
     String _errMsg = _getErrMessage(
-      _message,
-      _errorOrException,
+      msg,
+      errorOrException,
     );
     if (_errorRoutes[_errType].contains(ErrRoute.blackHole)) {
-      return Err();
+      return null;
     }
     if (_errorRoutes[_errType].contains(ErrRoute.console)) {
       _printErr(_errType, _errMsg);
     }
     if (_errorRoutes[_errType].contains(ErrRoute.screen)) {
-      switch (flash) {
-        case true:
-          var colors = _getColors(_errType);
-          return Err(
-              toast: ShortToast(
-                  errMsg: _errMsg,
-                  backgroundColor: colors["background_color"],
-                  textColor: colors["text_color"]));
-      }
-      return Err(flushbar: _buildFlushbar(_errType, _errMsg, short: short));
+      if (flash == false && context == null)
+        throw ArgumentError(
+            "You must provide a context if your message is not flash");
+      Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
+          short: short, flash: flash);
+      await _popMsg(err: err, context: context);
     }
-    return Err();
   }
 
-  _printErr(ErrType _errType, String _errMsg) {
+  Err _buildScreenMessage(
+      ErrType _errType, String _errMsg, dynamic _errorOrException,
+      {bool short = false, bool flash = false}) {
+    switch (flash) {
+      case true:
+        var colors = _getColors(_errType);
+        return Err(
+            msg: _errMsg,
+            type: _errType,
+            toast: ShortToast(
+                errMsg: _errMsg,
+                backgroundColor: colors["background_color"],
+                textColor: colors["text_color"]));
+    }
+    return Err(
+        msg: _errMsg,
+        type: _errType,
+        flushbar: _buildFlushbar(_errType, _errMsg, short: short));
+  }
+
+  Future<void> _popMsg({Err err, BuildContext context}) async {
+    switch (err.flushbar != null) {
+      case true:
+        err.show(context);
+        break;
+      default:
+        err.show();
+    }
+  }
+
+  _printErr(ErrType _errType, String _errMsg) async {
     switch (_errType) {
       case ErrType.critical:
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
@@ -309,10 +350,12 @@ class ErrRouter {
 /// The err return object used by [show] : either a [Flushbar], a
 /// [Toast] or nothing
 class Err {
-  Err({this.flushbar, this.toast});
+  Err({@required this.msg, @required this.type, this.flushbar, this.toast});
 
   final Flushbar flushbar;
   final ShortToast toast;
+  final String msg;
+  final ErrType type;
 
   /// The show method to pop the message on screen if needed.
   /// A [BuildContext] is required only for [Flushbar] messages,

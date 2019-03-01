@@ -29,18 +29,16 @@ The flash messages are toast messages. They stay one second on the screen
    ```dart
    @override
    void initState() {
-      logger.debugFlash(msg: "Init state").then((err) {
-         err.show();
-       });
+      logger.debugFlash("Init state");
        super.initState();
    }
    ```
 
 Available flash messages:
 
-**`debugFlash`**(`String` *msg*, `Exception or Error` *errorOrException*)
+**`debugFlash`**(`String` *msg*): a debug message
 
-**`infoFlash`**(`String` *msg*, `Exception or Error` *errorOrException*)
+**`infoFlash`**(`String` *msg*): an information message
 
 ![Screenshot](img/info_flash.png)
 
@@ -49,41 +47,39 @@ Available flash messages:
 The regular messages are snackbar messages. They need a `BuildContext`
 
    ```dart
-   logger.info(msg: "File uploaded in $elapsed s").then((err) {
-      err.show(context);
-   });
-
-   // or
-
-   Err err = await logger.info(msg: "File uploaded in $elapsed s");
-   // if (err != nil) // hi Go!  Not needed here
-   // because the show method will do nothing in case
-   // of console route, it's used only to print on screen
-   err.show(context);
+   logger.info("File uploaded in $elapsed s", context: context);
+   logger.debug("A debug message", context: context);
+   try {
+      somethingWrong();
+   } catch(ex) {
+      logger.criticalErr(
+         err: ex,
+         msg: "Something wrong happened",
+         context: context);  
+   }
    ```
 
 Available messages:
 
-**`critical`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay until dismissed
+**`critical`**(`String` *msg*): will stay on screen until dismissed
 
-**`error`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay until dismissed
+**`criticalErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
 
-**`warning`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay for 3 seconds
+**`error`**(`String` *msg*): will stay on screen until dismissed
 
-**`warningLong`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay until dismissed
+**`errorErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
 
-**`info`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay for 3 seconds
+**`warning`**(`String` *msg*): will stay on screen until dismissed
 
-**`debug`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay for 3 seconds
+**`warningErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
 
-**`debugLong`**(`String` *msg*, `Exception or Error` *errorOrException*): will
-stay until dismissed
+**`warningShort`**(`String` *msg*): will stay on screen for 3 seconds
+
+**`warningErrShort`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen for 3 seconds
+
+**`info`**(`String` *msg*): will stay on screen for 3 seconds
+
+**`debug`**(`String` *msg*): will stay on screen for 3 seconds
 
 ![Screenshot](img/messages.png)
 
