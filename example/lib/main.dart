@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:err/err.dart';
 import 'logger.dart';
 
 void main() => runApp(MyApp());
@@ -38,17 +39,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () => logger.infoFlash("An info flash message"),
                 ),
                 RaisedButton(
+                  child: Text("Notification message"),
+                  onPressed: () => logger.notify(
+                      msg: "An error has occurred", errType: ErrType.error),
+                ),
+                RaisedButton(
                     child: Text("Info regular message"),
-                    onPressed: () =>
-                        logger.info("An info message", context: context)),
+                    onPressed: () => logger.info("An info message", context)),
                 RaisedButton(
                     child: Text("Warning message"),
-                    onPressed: () => logger.warning("Hey, this is warning!",
-                        context: context)),
+                    onPressed: () =>
+                        logger.warning("Hey, this is warning!", context)),
                 RaisedButton(
                     child: Text("Error message"),
                     onPressed: () =>
-                        logger.error("Something went wrong", context: context)),
+                        logger.error("Something went wrong", context)),
                 RaisedButton(
                     child: Text("Critical message from exception"),
                     onPressed: () {
@@ -64,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 RaisedButton(
                     child: Text("Debug message"),
                     onPressed: () =>
-                        logger.debug("Debug info message", context: context)),
+                        logger.debug("Debug info message", context)),
               ],
             )));
   }

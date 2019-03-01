@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'notifications.dart';
 
-/// The route types
-enum ErrRoute { console, screen, blackHole }
+/// The route destinations
+enum ErrRoute { console, screen, notification, blackHole }
 
-/// The error types
+/// The error channels
 enum ErrType { critical, error, warning, info, debug }
 
 /// The error router
@@ -39,16 +40,18 @@ class ErrRouter {
   bool terminalColors;
 
   Map<ErrType, List<ErrRoute>> _errorRoutes;
+  final _notification = ErrNotification();
+  int _notificationsCounter = 0;
 
   /// A critical error from a message. Will stay on screen until dismissed.
-  void criticalSync(String msg, {BuildContext context}) {
+  void criticalSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.critical, msg: msg, context: context);
   }
 
   /// A critical error from a message. Will stay on screen until dismissed.
-  Future<void> critical(String msg, {BuildContext context}) async {
+  Future<void> critical(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.critical, msg: msg, context: context);
@@ -72,14 +75,14 @@ class ErrRouter {
   }
 
   /// An error from a message. Will stay on screen until dismissed.
-  void errorSync(String msg, {BuildContext context}) {
+  void errorSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.error, msg: msg, context: context);
   }
 
   /// An error from a message. Will stay on screen until dismissed.
-  Future<void> error(String msg, {BuildContext context}) async {
+  Future<void> error(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.error, msg: msg, context: context);
@@ -102,14 +105,14 @@ class ErrRouter {
   }
 
   /// A warning from a message. Will stay on the screen until dismissed
-  void warningSync(String msg, {BuildContext context}) {
+  void warningSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, msg: msg, context: context);
   }
 
   /// A warning from a message. Will stay on the screen until dismissed
-  Future<void> warning(String msg, {BuildContext context}) async {
+  Future<void> warning(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, msg: msg, context: context);
@@ -133,14 +136,14 @@ class ErrRouter {
   }
 
   /// A warning from a message. Will stay on the screen for 3 seconds
-  void warningShortSync(String msg, {BuildContext context}) {
+  void warningShortSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, msg: msg, short: true, context: context);
   }
 
   /// A warning from a message. Will stay on the screen for 3 seconds
-  Future<void> warningShort(String msg, {BuildContext context}) async {
+  Future<void> warningShort(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.warning, msg: msg, short: true, context: context);
@@ -166,14 +169,14 @@ class ErrRouter {
   }
 
   /// An info from a message. Will stay on the screen for 3 seconds
-  void infoSync(String msg, {BuildContext context}) {
+  void infoSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.info, msg: msg, short: true, context: context);
   }
 
   /// An info from a message. Will stay on the screen for 3 seconds
-  Future<void> info(String msg, {BuildContext context}) async {
+  Future<void> info(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.info, msg: msg, short: true, context: context);
@@ -192,14 +195,14 @@ class ErrRouter {
   }
 
   /// An debug message from a message. Will stay on the screen for 3 seconds
-  void debugSync(String msg, {BuildContext context}) {
+  void debugSync(String msg, [BuildContext context]) {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.debug, msg: msg, short: true, context: context);
   }
 
   /// An debug message from a message. Will stay on the screen for 3 seconds
-  Future<void> debug(String msg, {BuildContext context}) async {
+  Future<void> debug(String msg, [BuildContext context]) async {
     /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.debug, msg: msg, short: true, context: context);
@@ -208,7 +211,6 @@ class ErrRouter {
   /// An debug flash message from a message.
   /// Will stay on the screen for 1 second
   void debugFlashSync(String msg) {
-    /// A [context] is required if the message goes to screen
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.debug, msg: msg, flash: true);
   }
@@ -224,6 +226,17 @@ class ErrRouter {
   Future<void> flash(String msg) async {
     if (msg == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.debug, msg: msg, flash: true);
+  }
+
+  /// The notify method sends a notification with a given error type
+  Future<void> notify({@required String msg, @required ErrType errType}) async {
+    if (msg == null) throw (ArgumentError.notNull());
+    _notification.showNotification(
+      title: _getErrTypeString(errType),
+      body: "$msg",
+      id: _notificationsCounter,
+    );
+    _notificationsCounter++;
   }
 
   void _dispatch(ErrType _errType,
@@ -242,10 +255,18 @@ class ErrRouter {
     if (_errorRoutes[_errType].contains(ErrRoute.console)) {
       _printErr(_errType, _errMsg);
     }
+    if (_errorRoutes[_errType].contains(ErrRoute.notification)) {
+      _notification.showNotification(
+        title: _getErrTypeString(_errType),
+        body: "$_errMsg",
+        id: _notificationsCounter,
+      );
+      _notificationsCounter++;
+    }
     if (_errorRoutes[_errType].contains(ErrRoute.screen)) {
       if (flash == false && context == null)
         throw ArgumentError(
-            "You must provide a context if your message is not flash");
+            "You must provide a context if your message goes to the screen and is not flash");
       _Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
           short: short, flash: flash);
       _popMsg(err: err, context: context);
@@ -389,6 +410,7 @@ class ErrRouter {
         break;
       case ErrType.debug:
         _backgroundColor = Colors.purple;
+        break;
     }
     return {
       "background_color": _backgroundColor,
@@ -424,8 +446,6 @@ class ErrRouter {
       case ErrType.debug:
         type = "Debug";
         break;
-      default:
-        type = "Unknown";
     }
     return type;
   }

@@ -2,12 +2,18 @@
 
 [![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err) [![api doc](img/api-doc.svg)](https://pub.dartlang.org/documentation/err/latest/err/err-library.html)
 
-A logs router that can pop messages to the device screen.
+A logs router. The messages can be routed to:
+
+- Terminal
+- Flash messages
+- Snackbar messages
+- Notifications
 
 ## Configuration
 
-Configure the log levels routes: available routes: console, screen or black hole. All the logs routed to the black hole will be silently swallowed: use
-this to disable a route. All routes default to console.
+Configure the log levels's routes: available routes: console, screen, notifications or black hole. All the logs routed to the black hole will be silently swallowed: use it this to disable a route. 
+
+All routes default to console.
 
    ```dart
    import 'package:err/err.dart';
@@ -15,12 +21,12 @@ this to disable a route. All routes default to console.
    var logger = ErrRouter(
       criticalRoute: [ErrRoute.console, ErrRoute.screen],
       errorRoute: [ErrRoute.screen, ErrRoute.console],
-      warningRoute: [ErrRoute.screen, ErrRoute.console],
+      warningRoute: [ErrRoute.screen, ErrRoute.console, ErrRoute.notification],
       infoRoute: [ErrRoute.screen],
       debugRoute: [ErrRoute.blackHole]);
    ```
 
-## Screen route usage
+## Screen route
 
 ### Flash messages
 
@@ -40,15 +46,17 @@ Available flash messages:
 
 **`infoFlash`**(`String` *msg*): an information message
 
+**`flash`**(`String` *msg*): alias for `debugFlash`
+
 ![Screenshot](img/info_flash.png)
 
-### Regular messages
+### Snackbar messages
 
-The regular messages are snackbar messages. They need a `BuildContext`
+The snackbar messages need a `BuildContext`
 
    ```dart
-   logger.info("File uploaded in $elapsed s", context: context);
-   logger.debug("A debug message", context: context);
+   logger.info("File uploaded in $elapsed s", context);
+   logger.debug("A debug message", context);
    try {
       somethingWrong();
    } catch(ex) {
@@ -59,7 +67,7 @@ The regular messages are snackbar messages. They need a `BuildContext`
    }
    ```
 
-Available messages:
+Available messages
 
 **`critical`**(`String` *msg*): will stay on screen until dismissed
 
@@ -86,6 +94,12 @@ All the functions are async. To use them in a synchronous maner append
 
 ![Screenshot](img/messages.png)
 
+## Notifications route
+
+The messages will pop as notifications. A special method is available for notifications:
+
+**`notify`**({`String` *msg*, `ErrType` *errType*}): will popup a notification of the specified error type
+
 ## Console route
 
 ![Screenshot](img/terminal.png)
@@ -104,3 +118,4 @@ By default the terminal output is configured for black and white. If your termin
 
 - [Flutter toast](https://pub.dartlang.org/packages/fluttertoast)
 - [Flushbar](https://pub.dartlang.org/packages/flushbar)
+- [Flutter Local Notifications](https://github.com/MaikuB/flutter_local_notifications)
