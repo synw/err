@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+**Breaking change**: the `context` parameter is now positionnal for the main methods
+
+Feature: add the notification route
+
 ## 0.4.0
 
 Add sync functions
