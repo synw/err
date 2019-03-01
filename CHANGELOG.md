@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+Add sync functions
+
 ## 0.3.0
 
 **Breaking change**: the api has been simplified with a more efficient syntax

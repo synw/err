@@ -52,7 +52,7 @@ The regular messages are snackbar messages. They need a `BuildContext`
    try {
       somethingWrong();
    } catch(ex) {
-      logger.criticalErr(
+      logger.criticalErrSync(
          err: ex,
          msg: "Something wrong happened",
          context: context);  
@@ -80,6 +80,9 @@ Available messages:
 **`info`**(`String` *msg*): will stay on screen for 3 seconds
 
 **`debug`**(`String` *msg*): will stay on screen for 3 seconds
+
+All the functions are async. To use them in a synchronous maner append
+`Sync` to their name. Ex: `errorSync()`.
 
 ![Screenshot](img/messages.png)
 
