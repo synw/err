@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:err/err.dart';
 import 'logger.dart';
 
 void main() => runApp(MyApp());
