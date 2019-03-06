@@ -39,11 +39,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   onPressed: () => logger.infoFlash("An info flash message"),
                 ),
                 RaisedButton(
-                  child: Text("Notification message"),
-                  onPressed: () => logger.notify(
-                      msg: "An error has occurred", errType: ErrType.error),
-                ),
-                RaisedButton(
                     child: Text("Info regular message"),
                     onPressed: () => logger.info("An info message", context)),
                 RaisedButton(

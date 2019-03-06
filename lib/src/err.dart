@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'notifications.dart';
 
 /// The route destinations
-enum ErrRoute { console, screen, notification, blackHole }
+enum ErrRoute { console, screen, blackHole }
 
 /// The error channels
 enum ErrType { critical, error, warning, info, debug }
@@ -40,8 +39,6 @@ class ErrRouter {
   bool terminalColors;
 
   Map<ErrType, List<ErrRoute>> _errorRoutes;
-  final _notification = ErrNotification();
-  int _notificationsCounter = 0;
 
   /// A critical error from a message. Will stay on screen until dismissed.
   void criticalSync(String msg, [BuildContext context]) {
@@ -228,17 +225,6 @@ class ErrRouter {
     _dispatch(ErrType.debug, msg: msg, flash: true);
   }
 
-  /// The notify method sends a notification with a given error type
-  Future<void> notify({@required String msg, @required ErrType errType}) async {
-    if (msg == null) throw (ArgumentError.notNull());
-    _notification.showNotification(
-      title: _getErrTypeString(errType),
-      body: "$msg",
-      id: _notificationsCounter,
-    );
-    _notificationsCounter++;
-  }
-
   void _dispatch(ErrType _errType,
       {BuildContext context,
       String msg,
@@ -254,14 +240,6 @@ class ErrRouter {
     }
     if (_errorRoutes[_errType].contains(ErrRoute.console)) {
       _printErr(_errType, _errMsg);
-    }
-    if (_errorRoutes[_errType].contains(ErrRoute.notification)) {
-      _notification.showNotification(
-        title: _getErrTypeString(_errType),
-        body: "$_errMsg",
-        id: _notificationsCounter,
-      );
-      _notificationsCounter++;
     }
     if (_errorRoutes[_errType].contains(ErrRoute.screen)) {
       if (flash == false && context == null)

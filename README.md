@@ -7,7 +7,6 @@ A logs router. The messages can be routed to:
 - Terminal
 - Flash messages
 - Snackbar messages
-- Notifications
 
 ## Configuration
 
@@ -93,12 +92,6 @@ All the functions are async. To use them in a synchronous maner append
 `Sync` to their name. Ex: `errorSync()`.
 
 ![Screenshot](img/messages.png)
-
-## Notifications route
-
-The messages will pop as notifications. A special method is available for notifications:
-
-**`notify`**({`String` *msg*, `ErrType` *errType*}): will popup a notification of the specified error type
 
 ## Console route
 
