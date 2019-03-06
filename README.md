@@ -111,4 +111,3 @@ By default the terminal output is configured for black and white. If your termin
 
 - [Flutter toast](https://pub.dartlang.org/packages/fluttertoast)
 - [Flushbar](https://pub.dartlang.org/packages/flushbar)
-- [Flutter Local Notifications](https://github.com/MaikuB/flutter_local_notifications)
