@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+Remove the notifications route to avoid permissions issues
+
 ## 0.5.0
 
 **Breaking change**: the `context` parameter is now positionnal for the main methods
