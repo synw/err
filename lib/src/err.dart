@@ -260,7 +260,7 @@ class ErrRouter {
         return _Err(
             msg: _errMsg,
             type: _errType,
-            toast: ShortToast(
+            toast: _ShortToast(
                 errMsg: _errMsg,
                 backgroundColor: colors["background_color"],
                 textColor: colors["text_color"]));
@@ -433,7 +433,7 @@ class _Err {
   _Err({@required this.msg, @required this.type, this.flushbar, this.toast});
 
   final Flushbar flushbar;
-  final ShortToast toast;
+  final _ShortToast toast;
   final String msg;
   final ErrType type;
 
@@ -455,8 +455,8 @@ class _Err {
   }
 }
 
-class ShortToast {
-  ShortToast(
+class _ShortToast {
+  _ShortToast(
       {@required this.backgroundColor,
       @required this.textColor,
       @required this.errMsg});
