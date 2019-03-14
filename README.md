@@ -22,7 +22,7 @@ All routes default to console.
    var logger = ErrRouter(
       criticalRoute: [ErrRoute.console, ErrRoute.screen],
       errorRoute: [ErrRoute.screen, ErrRoute.console],
-      warningRoute: [ErrRoute.screen, ErrRoute.console, ErrRoute.notification],
+      warningRoute: [ErrRoute.screen, ErrRoute.console],
       infoRoute: [ErrRoute.screen],
       debugRoute: [ErrRoute.blackHole]);
    ```
