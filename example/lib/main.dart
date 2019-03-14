@@ -20,55 +20,55 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  bool firstBuildDone = false;
+  bool _firstBuildDone = false;
 
   @override
   Widget build(BuildContext context) {
-    if (!firstBuildDone)
+    if (!_firstBuildDone)
       logger.debugFlash("First build").then((_) {
-        firstBuildDone = true;
+        _firstBuildDone = true;
       });
     return Scaffold(
         body: Padding(
-            padding: EdgeInsets.all(25.0),
+            padding: const EdgeInsets.all(25.0),
             child: ListView(
               children: <Widget>[
                 RaisedButton(
-                  child: Text("Info flash message"),
+                  child: const Text("Info flash message"),
                   onPressed: () => logger.infoFlash("An info flash message"),
                 ),
                 RaisedButton(
-                    child: Text("Info regular message"),
-                    onPressed: () => logger.info("An info message", context)),
-                RaisedButton(
-                    child: Text("Warning message"),
+                    child: const Text("Info regular message"),
                     onPressed: () =>
-                        logger.warning("Hey, this is warning!", context)),
+                        logger.infoScreen("An info message", context: context)),
                 RaisedButton(
-                    child: Text("Error message"),
-                    onPressed: () =>
-                        logger.error("Something went wrong", context)),
+                    child: const Text("Warning message"),
+                    onPressed: () => logger.warningScreen(
+                        "Hey, this is warning!",
+                        context: context)),
                 RaisedButton(
-                    child: Text("Critical message from exception"),
+                    child: const Text("Error message"),
+                    onPressed: () => logger.errorScreen("Something went wrong",
+                        context: context)),
+                RaisedButton(
+                    child: const Text("Critical message from exception"),
                     onPressed: () {
                       try {
                         _doWrong();
                       } catch (e) {
-                        logger.criticalErrSync(
-                            msg: "Something went really wrong",
-                            err: e,
-                            context: context);
+                        logger.criticalScreen("Something went really wrong",
+                            err: e, context: context);
                       }
                     }),
                 RaisedButton(
-                    child: Text("Debug message"),
-                    onPressed: () =>
-                        logger.debug("Debug info message", context)),
+                    child: const Text("Debug message"),
+                    onPressed: () => logger.debugScreen("Debug info message",
+                        context: context)),
               ],
             )));
   }
 
-  _doWrong() {
+  void _doWrong() {
     List<String> li;
     li.add("wrong");
   }

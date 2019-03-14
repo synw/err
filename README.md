@@ -2,6 +2,8 @@
 
 [![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err) [![api doc](img/api-doc.svg)](https://pub.dartlang.org/documentation/err/latest/err/err-library.html)
 
+**Warning**: the api is currently unstable
+
 A logs router. The messages can be routed to:
 
 - Terminal
@@ -41,9 +43,11 @@ The flash messages are toast messages. They stay one second on the screen
 
 Available flash messages:
 
+**`infoFlash`**(`String` *msg*): an information message
+
 **`debugFlash`**(`String` *msg*): a debug message
 
-**`infoFlash`**(`String` *msg*): an information message
+**`warningFlash`**(`String` *msg*): a warning message
 
 **`flash`**(`String` *msg*): alias for `debugFlash`
 
@@ -54,46 +58,53 @@ Available flash messages:
 The snackbar messages need a `BuildContext`
 
    ```dart
-   logger.info("File uploaded in $elapsed s", context);
-   logger.debug("A debug message", context);
+   logger.infoScreen("File uploaded in $elapsed s", context: context);
+   logger.debugScreen("A debug message", context: context);
    try {
       somethingWrong();
    } catch(ex) {
-      logger.criticalErrSync(
+      logger.criticalScreen(
          err: ex,
          msg: "Something wrong happened",
          context: context);  
    }
    ```
 
-Available messages
+#### Available messages
 
-**`critical`**(`String` *msg*): will stay on screen until dismissed
+**`criticalScreen`**(`String` *msg*, {`@required BuildContext` *context*, `dynamic` *err*})
 
-**`criticalErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
+**`errorScreen`**(`String` *msg*, {`@required BuildContext` *context*, `dynamic` *err*})
 
-**`error`**(`String` *msg*): will stay on screen until dismissed
+**`warningScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
 
-**`errorErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
+**`infoScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
 
-**`warning`**(`String` *msg*): will stay on screen until dismissed
+**`debugScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
 
-**`warningErr`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen until dismissed
+#### Parameters:
 
-**`warningShort`**(`String` *msg*): will stay on screen for 3 seconds
+**msg** : a text message
 
-**`warningErrShort`**({`String` *msg*, `dynamic` *err*}): `err` is an error or an exception. Will stay on screen for 3 seconds
+**err** : an error or exception
 
-**`info`**(`String` *msg*): will stay on screen for 3 seconds
+**short** : if enabled the message will stay on screen for 3 seconds. If not it will stay until dismissed
 
-**`debug`**(`String` *msg*): will stay on screen for 3 seconds
-
-All the functions are async. To use them in a synchronous maner append
-`Sync` to their name. Ex: `errorSync()`.
+**context** : the build context required for screen messages
 
 ![Screenshot](img/messages.png)
 
 ## Console route
+
+**`critical`**(`String` *msg*, {`dynamic` *err*})
+
+**`error`**(`String` *msg*)
+
+**`warning`**(`String` *msg*, {`dynamic` *err*})
+
+**`info`**(`String` *msg*)
+
+**`debug`**(`String` *msg*, {`dynamic` *err*})
 
 ![Screenshot](img/terminal.png)
 
