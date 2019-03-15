@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0
+
+- **Breaking change**: fix some functions in the api to be easier to use
+
+- Use more strict linting rules
+
 ## 0.6.0
 
 Remove the notifications route to avoid permissions issues
