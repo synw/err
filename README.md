@@ -2,8 +2,6 @@
 
 [![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err) [![api doc](img/api-doc.svg)](https://pub.dartlang.org/documentation/err/latest/err/err-library.html)
 
-**Warning**: the api is currently unstable
-
 A logs router. The messages can be routed to:
 
 - Terminal
