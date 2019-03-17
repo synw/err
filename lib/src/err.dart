@@ -169,7 +169,7 @@ class ErrRouter {
   /// Will stay on the screen for 1 second
   Future<void> infoFlash(String msg) async {
     if (msg == null) throw (ArgumentError.notNull());
-    _dispatch(ErrType.info, msg: msg, flash: true);
+    _dispatch(ErrType.info, msg: msg, toScreen: true, flash: true);
   }
 
   /// An debug message
@@ -198,7 +198,7 @@ class ErrRouter {
   /// Will stay on the screen for 1 second
   Future<void> debugFlash(String msg) async {
     if (msg == null) throw (ArgumentError.notNull());
-    _dispatch(ErrType.debug, msg: msg, flash: true);
+    _dispatch(ErrType.debug, toScreen: true, msg: msg, flash: true);
   }
 
   /// An alias for infoFlash
