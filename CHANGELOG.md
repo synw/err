@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+Fix `infoFlash` and `debugFlash`
+
 ## 0.7.0
 
 - **Breaking change**: fix some functions in the api to be easier to use
