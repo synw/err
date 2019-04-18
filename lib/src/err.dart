@@ -161,7 +161,7 @@ class ErrRouter {
     if (msg == null) throw (ArgumentError.notNull());
     if (context == null) throw (ArgumentError.notNull());
     _dispatch(ErrType.info,
-        msg: msg, short: true, toScreen: true, context: context);
+        msg: msg, short: short, toScreen: true, context: context);
   }
 
   /// An info flash message.

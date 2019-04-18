@@ -86,7 +86,7 @@ The snackbar messages need a `BuildContext`
 
 **err** : an error or exception
 
-**short** : if enabled the message will stay on screen for 3 seconds. If not it will stay until dismissed
+**short** : if enabled the message will stay on screen for 5 seconds. If not it will stay until dismissed
 
 **context** : the build context required for screen messages
 
