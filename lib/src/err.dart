@@ -327,7 +327,7 @@ class ErrRouter {
         break;
     }
     return Flushbar(
-      duration: short ? Duration(seconds: 3) : null,
+      duration: short ? Duration(seconds: 5) : Duration(days: 365),
       icon: Icon(
         _icon,
         color: _iconColor,
