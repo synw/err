@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.2
+
+- Fix the `infoScreen` `short` parameter
+- Set short messages duration to 5 seconds
+
 ## 0.7.1
 
 Fix `infoFlash` and `debugFlash`
