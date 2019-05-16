@@ -113,6 +113,15 @@ class ErrRouter {
         msg: msg, errorOrException: err, context: context, toScreen: true);
   }
 
+  /// A flash error message.
+  ///
+  /// Will stay on screen for 5 seconds
+  Future<void> errorFlash(String msg) async {
+    if (msg == null) throw (ArgumentError.notNull());
+    _dispatch(ErrType.error,
+        msg: msg, toScreen: true, flash: true, timeOnScreen: 5);
+  }
+
   /// A warning from a message.
   Future<void> warning(String msg, {dynamic err}) async {
     /// An error or exception can be passed to [err]
@@ -140,10 +149,11 @@ class ErrRouter {
 
   /// A warning flash message.
   ///
-  /// Will stay on screen for 1 second
+  /// Will stay on screen for 3 seconds
   Future<void> warningFlash(String msg) async {
     if (msg == null) throw (ArgumentError.notNull());
-    _dispatch(ErrType.warning, msg: msg, toScreen: true, flash: true);
+    _dispatch(ErrType.warning,
+        msg: msg, toScreen: true, flash: true, timeOnScreen: 3);
   }
 
   /// An info message.
@@ -212,6 +222,7 @@ class ErrRouter {
       dynamic errorOrException,
       bool short = false,
       bool flash = false,
+      int timeOnScreen = 1,
       bool toScreen = false}) {
     String _errMsg = _getErrMessage(
       msg,
@@ -225,14 +236,14 @@ class ErrRouter {
     }
     if (_errorRoutes[_errType].contains(ErrRoute.screen) && toScreen == true) {
       _Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
-          short: short, flash: flash);
+          short: short, flash: flash, timeOnScreen: timeOnScreen);
       _popMsg(err: err, context: context);
     }
   }
 
   _Err _buildScreenMessage(
       ErrType _errType, String _errMsg, dynamic _errorOrException,
-      {bool short = false, bool flash = false}) {
+      {bool short = false, bool flash = false, int timeOnScreen}) {
     switch (flash) {
       case true:
         var colors = _getColors(_errType);
@@ -241,6 +252,7 @@ class ErrRouter {
             type: _errType,
             toast: _ShortToast(
                 errMsg: _errMsg,
+                timeOnScreen: timeOnScreen,
                 backgroundColor: colors["background_color"],
                 textColor: colors["text_color"]));
     }
@@ -440,18 +452,20 @@ class _ShortToast {
   _ShortToast(
       {@required this.backgroundColor,
       @required this.textColor,
+      this.timeOnScreen,
       @required this.errMsg});
 
   final Color backgroundColor;
   final Color textColor;
   final String errMsg;
+  final int timeOnScreen;
 
   void show([BuildContext _]) {
     Fluttertoast.showToast(
         msg: errMsg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 1,
+        timeInSecForIos: timeOnScreen,
         backgroundColor: backgroundColor,
         textColor: textColor,
         fontSize: 16.0);
