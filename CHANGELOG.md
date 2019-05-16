@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.7.2
+## 0.7.3
 
 - Add an `errorFlash` method
 
