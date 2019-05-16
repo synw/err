@@ -2,6 +2,10 @@
 
 ## 0.7.2
 
+- Add an `errorFlash` method
+
+## 0.7.2
+
 - Fix the `infoScreen` `short` parameter
 - Set short messages duration to 5 seconds
 
