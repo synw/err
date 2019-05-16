@@ -41,11 +41,13 @@ The flash messages are toast messages. They stay one second on the screen
 
 Available flash messages:
 
-**`infoFlash`**(`String` *msg*): an information message
+**`infoFlash`**(`String` *msg*): an information message. Stays for 1 second on screen.
 
-**`debugFlash`**(`String` *msg*): a debug message
+**`debugFlash`**(`String` *msg*): a debug message. Stays for 1 second on screen.
 
-**`warningFlash`**(`String` *msg*): a warning message
+**`warningFlash`**(`String` *msg*): a warning message. Stays for 3 seconds on screen.
+
+**`errorFlash`**(`String` *msg*): an error message. Stays for 5 seconds on screen.
 
 **`flash`**(`String` *msg*): alias for `debugFlash`
 
