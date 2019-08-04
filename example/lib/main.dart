@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:err/err.dart';
 import 'logger.dart';
 
 void main() => runApp(MyApp());
@@ -29,6 +30,18 @@ class _MyHomePageState extends State<MyHomePage> {
         _firstBuildDone = true;
       });
     return Scaffold(
+        appBar: AppBar(
+          title: const Text("Err"),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.insert_drive_file),
+                onPressed: () => Navigator.of(context).push<DeviceConsolePage>(
+                        MaterialPageRoute<DeviceConsolePage>(
+                            builder: (BuildContext context) {
+                      return DeviceConsolePage(logger);
+                    })))
+          ],
+        ),
         body: Padding(
             padding: const EdgeInsets.all(25.0),
             child: ListView(
