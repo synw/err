@@ -9,7 +9,7 @@ homepage: https://github.com/synw/err
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 0.7.3
+version: 0.8.0
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -20,7 +20,6 @@ dependencies:
   fluttertoast: ^3.1.0
   flushbar: ^1.8.2
   logger: ^0.7.0+2
-  logger_flutter: ^0.7.0
   pedantic: ^1.7.0
 
   # The following adds the Cupertino Icons font to your application.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8.0
+
+- Add an errorFlash method
+- Add on device console option
+- Refactoring
+- Use pedantic for static anlytics
+
 ## 0.7.3
 
 - Add an `errorFlash` method
