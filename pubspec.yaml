@@ -17,8 +17,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flushbar: ^1.2.4
-  fluttertoast: ^3.0.1
+  fluttertoast: ^3.1.0
+  flushbar: ^1.8.2
+  logger: ^0.7.0+2
+  logger_flutter: ^0.7.0
+  pedantic: ^1.7.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
