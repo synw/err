@@ -118,6 +118,19 @@ By default the terminal output is configured for black and white. If your termin
 
 ![Screenshot](img/terminal_colors.png)
 
+## On device console
+
+A console log is available on the device. To enable it:
+
+```dart
+ErrRouter(
+    // ...
+    deviceConsole: true
+)
+```
+
+Navigate to `DeviceConsolePage(logger)` to see the console on the device
+
 ## Libraries used
 
 - [Flutter toast](https://pub.dartlang.org/packages/fluttertoast)
