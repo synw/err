@@ -1,36 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
-/// The route destinations
-enum ErrRoute {
-  /// The terminal route
-  console,
-
-  /// Route for screen and flash messages
-  screen,
-
-  /// Route to nowhere: silently swallow the messages
-  blackHole
-}
-
-/// The error channels
-enum ErrType {
-  /// Critical errors
-  critical,
-
-  /// Normal errors
-  error,
-
-  /// Warning level
-  warning,
-
-  /// Info level
-  info,
-
-  /// Debug level
-  debug
-}
+import 'package:logger/logger.dart';
+import 'types.dart';
+import 'console.dart';
 
 /// The error router
 class ErrRouter {
@@ -55,6 +28,7 @@ class ErrRouter {
       ErrType.info: infoRoute,
       ErrType.debug: debugRoute,
     };
+    _logger = Logger(printer: ConsolePrinter(methodCount: 8, skipMethods: 3));
   }
 
   /// Destinations for the critical errors
@@ -76,6 +50,8 @@ class ErrRouter {
   bool terminalColors;
 
   Map<ErrType, List<ErrRoute>> _errorRoutes;
+
+  Logger _logger;
 
   /// A critical error
   Future<void> critical(String msg, {dynamic err}) async {
@@ -232,7 +208,7 @@ class ErrRouter {
       return null;
     }
     if (_errorRoutes[_errType].contains(ErrRoute.console)) {
-      _printErr(_errType, _errMsg);
+      _consoleLog(_errType, _errMsg);
     }
     if (_errorRoutes[_errType].contains(ErrRoute.screen) && toScreen == true) {
       _Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
@@ -269,6 +245,26 @@ class ErrRouter {
         break;
       default:
         err.show();
+    }
+  }
+
+  void _consoleLog(ErrType _errType, String _errMsg) {
+    switch (_errType) {
+      case ErrType.critical:
+        _logger.wtf(_errMsg);
+        break;
+      case ErrType.error:
+        _logger.e(_errMsg);
+        break;
+      case ErrType.warning:
+        _printErr(ErrType.warning, _errMsg);
+        break;
+      case ErrType.info:
+        _printErr(ErrType.info, _errMsg);
+        break;
+      case ErrType.debug:
+        _printErr(ErrType.debug, _errMsg);
+        break;
     }
   }
 
