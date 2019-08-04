@@ -15,7 +15,8 @@ class ErrRouter {
       this.warningRoute,
       this.infoRoute,
       this.debugRoute,
-      this.terminalColors = false}) {
+      this.terminalColors = false,
+      this.deviceConsole = false}) {
     criticalRoute = criticalRoute ?? [ErrRoute.console];
     errorRoute = errorRoute ?? [ErrRoute.console];
     warningRoute = warningRoute ?? [ErrRoute.console];
@@ -49,9 +50,15 @@ class ErrRouter {
   /// Use a terminal tha support colored emojis
   bool terminalColors;
 
-  Map<ErrType, List<ErrRoute>> _errorRoutes;
+  /// Use the on device console
+  bool deviceConsole;
 
+  Map<ErrType, List<ErrRoute>> _errorRoutes;
   Logger _logger;
+  final _messages = <String>[];
+
+  /// The logged messages for device console
+  List<String> get messages => _messages;
 
   /// A critical error
   Future<void> critical(String msg, {dynamic err}) async {
@@ -189,7 +196,7 @@ class ErrRouter {
 
   /// An alias for infoFlash
   Future<void> flash(String msg) async {
-    infoFlash(msg);
+    await infoFlash(msg);
   }
 
   void _dispatch(ErrType _errType,
@@ -204,6 +211,9 @@ class ErrRouter {
       msg,
       errorOrException,
     );
+    if (deviceConsole) {
+      _messages.insert(0, _formatErrMsg(_errType, _errMsg));
+    }
     if (_errorRoutes[_errType].contains(ErrRoute.blackHole)) {
       return null;
     }
@@ -269,6 +279,12 @@ class ErrRouter {
   }
 
   void _printErr(ErrType _errType, String _errMsg) {
+    String msg = _formatErrMsg(_errType, _errMsg);
+    print(msg);
+  }
+
+  String _formatErrMsg(ErrType _errType, String _errMsg) {
+    String msg;
     switch (_errType) {
       case ErrType.critical:
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
@@ -276,7 +292,7 @@ class ErrRouter {
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
         String icon;
         terminalColors ? icon = "✖️ " : icon = "✖️✖️✖️";
-        print("$icon CRITICAL: $_errMsg$endStr");
+        msg = "$icon CRITICAL: $_errMsg$endStr";
         break;
       case ErrType.error:
         bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
@@ -284,24 +300,25 @@ class ErrRouter {
         String icon;
         terminalColors ? icon = "🔴" : icon = "⏺⏺⏺";
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
-        print("$icon ERROR: $_errMsg$endStr");
+        msg = "$icon ERROR: $_errMsg$endStr";
         break;
       case ErrType.warning:
         String icon;
         terminalColors ? icon = "⚠️ " : icon = "⏹ ⚠️";
-        print("$icon WARNING: $_errMsg");
+        msg = "$icon WARNING: $_errMsg";
         break;
       case ErrType.info:
         String icon;
         terminalColors ? icon = "🔔" : icon = "▶️";
-        print("$icon INFO: $_errMsg");
+        msg = "$icon INFO: $_errMsg";
         break;
       case ErrType.debug:
-        print("📞 DEBUG: $_errMsg");
+        msg = "📞 DEBUG: $_errMsg";
         break;
       default:
-        print("$_errMsg");
+        msg = "$_errMsg";
     }
+    return msg;
   }
 
   Flushbar _buildFlushbar(ErrType _errType, String _errMsg,
@@ -434,10 +451,11 @@ class _Err {
       return;
     }
     if (flushbar != null) {
-      if (context == null)
+      if (context == null) {
         throw ArgumentError(
             "Pass the context to show if you use anything other " +
                 "than flash messages");
+      }
       flushbar.show(context);
       return;
     }
