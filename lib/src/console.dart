@@ -1,6 +1,8 @@
 import 'package:logger/logger.dart';
 
+/// The console printer
 class ConsolePrinter extends PrettyPrinter {
+  /// Default constructor
   ConsolePrinter(
       {int methodCount = 2,
       this.skipMethods = 0,
@@ -17,6 +19,7 @@ class ConsolePrinter extends PrettyPrinter {
             printEmojis: printEmojis,
             printTime: printTime);
 
+  /// Used to skip internal methods from the stack trace
   final int skipMethods;
 
   @override
