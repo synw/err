@@ -4,7 +4,7 @@ import 'err.dart';
 /// On device log page
 class DeviceConsolePage extends StatelessWidget {
   /// Provide a [logger]
-  DeviceConsolePage(this.logger);
+  const DeviceConsolePage(this.logger);
 
   /// The logger to use
   final ErrRouter logger;

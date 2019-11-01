@@ -21,19 +21,18 @@ class ConsolePrinter extends PrettyPrinter {
 
   @override
   String formatStackTrace(StackTrace stackTrace, int methodCount) {
-    var lines = stackTrace.toString().split("\n");
-
-    var formatted = <String>[];
+    final lines = stackTrace.toString().split("\n");
+    final formatted = <String>[];
     var count = 0;
     var printed = 0;
-    for (var line in lines) {
-      var match = PrettyPrinter.stackTraceRegex.matchAsPrefix(line);
+    for (final line in lines) {
+      final match = PrettyPrinter.stackTraceRegex.matchAsPrefix(line);
       if (match != null) {
         if (match.group(2).startsWith('package:logger')) {
           continue;
         }
         if (count > (skipMethods - 1)) {
-          var newLine = ("#$printed   ${match.group(1)} (${match.group(2)})");
+          final newLine = "#$printed   ${match.group(1)} (${match.group(2)})";
           formatted.add(newLine.replaceAll('<anonymous closure>', '()'));
           ++printed;
         }

@@ -1,13 +1,10 @@
-/// Error route destination
-enum ErrRoute {
-  /// The terminal route
-  console,
+/// The error channels
+enum ErrChannel {
+  /// The developpement channel
+  dev,
 
-  /// Route for screen and flash messages
-  screen,
-
-  /// Route to nowhere: silently swallow the messages
-  blackHole
+  /// The production channel
+  production
 }
 
 /// The error channels

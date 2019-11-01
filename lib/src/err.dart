@@ -1,79 +1,55 @@
-import 'package:flutter/material.dart';
 import 'package:flushbar/flushbar.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
-import 'types.dart';
+
 import 'console.dart';
+import 'types.dart';
 
 /// The error router
 class ErrRouter {
-  /// The main constructor: provides default routes to console. Set your
-  /// routes using the parameters
-  ErrRouter(
-      {this.criticalRoute,
-      this.errorRoute,
-      this.warningRoute,
-      this.infoRoute,
-      this.debugRoute,
-      this.terminalColors = false,
-      this.deviceConsole = false}) {
-    criticalRoute = criticalRoute ?? [ErrRoute.console];
-    errorRoute = errorRoute ?? [ErrRoute.console];
-    warningRoute = warningRoute ?? [ErrRoute.console];
-    infoRoute = infoRoute ?? [ErrRoute.console];
-    debugRoute = debugRoute ?? [ErrRoute.console];
-    _errorRoutes = {
-      ErrType.critical: criticalRoute,
-      ErrType.error: errorRoute,
-      ErrType.warning: warningRoute,
-      ErrType.info: infoRoute,
-      ErrType.debug: debugRoute,
-    };
-    _logger = Logger(printer: ConsolePrinter(methodCount: 8, skipMethods: 3));
-  }
+  /// The main constructor: provide the [channel]
+  ErrRouter({
+    @required this.channel,
+    this.deviceConsole = false,
+    this.maxDeviceConsoleMessages = 100,
+  }) : _logger =
+            Logger(printer: ConsolePrinter(methodCount: 8, skipMethods: 3));
 
-  /// Destinations for the critical errors
-  List<ErrRoute> criticalRoute;
-
-  /// Destinations for the errors
-  List<ErrRoute> errorRoute;
-
-  /// Destinations for the warnings
-  List<ErrRoute> warningRoute;
-
-  /// Destination for the info messages
-  List<ErrRoute> infoRoute;
-
-  /// Destination for the debug messages
-  List<ErrRoute> debugRoute;
-
-  /// Use a terminal tha support colored emojis
-  bool terminalColors;
+  /// The error channel
+  ErrChannel channel;
 
   /// Use the on device console
   bool deviceConsole;
 
-  Map<ErrType, List<ErrRoute>> _errorRoutes;
-  Logger _logger;
+  /// The maximum number of messages for the on device console
+  int maxDeviceConsoleMessages;
+
+  final Logger _logger;
   final _messages = <String>[];
 
   /// The logged messages for device console
   List<String> get messages => _messages;
 
   /// A critical error
+  ///
+  /// An error or exception can be passed to [err]
   Future<void> critical(String msg, {dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.critical, msg: msg, errorOrException: err);
   }
 
   /// A critical error
   ///
   /// Will stay on screen until dismissed.
+  /// An error or exception can be passed to [err]
   Future<void> criticalScreen(String msg,
       {@required BuildContext context, dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.critical,
         msg: msg, errorOrException: err, toScreen: true, context: context);
   }
@@ -81,17 +57,21 @@ class ErrRouter {
   /// An error message
   Future<void> error(String msg, {dynamic err}) async {
     /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.error, msg: msg, errorOrException: err);
   }
 
   /// An error message
   ///
   /// Will stay on screen until dismissed.
+  /// An error or exception can be passed to [err]
   Future<void> errorScreen(String msg,
       {@required BuildContext context, dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.error,
         msg: msg, errorOrException: err, context: context, toScreen: true);
   }
@@ -100,28 +80,35 @@ class ErrRouter {
   ///
   /// Will stay on screen for 5 seconds
   Future<void> errorFlash(String msg) async {
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.error,
         msg: msg, toScreen: true, flash: true, timeOnScreen: 5);
   }
 
   /// A warning from a message.
+  ///
+  /// An error or exception can be passed to [err]
   Future<void> warning(String msg, {dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.warning, msg: msg, errorOrException: err);
   }
 
   /// A warning from a message.
   ///
   /// Will stay on the screen until dismissed
+  /// A [context] has to be provided for the message to print on device screen
+  /// If [short] is true it will stay on screen only for 3 seconds, if false
+  /// it will stay until dismissed. An error or exception can be passed
+  /// to [err]
   Future<void> warningScreen(String msg,
       {@required BuildContext context, dynamic err, bool short = true}) async {
-    /// A [context] has to be provided for the message to print on device screen
-    /// If [short] is true it will stay on screen only for 3 seconds, if false
-    /// it will stay until dismissed. An error or exception can be passed
-    /// to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.warning,
         msg: msg,
         errorOrException: err,
@@ -134,25 +121,34 @@ class ErrRouter {
   ///
   /// Will stay on screen for 3 seconds
   Future<void> warningFlash(String msg) async {
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.warning,
         msg: msg, toScreen: true, flash: true, timeOnScreen: 3);
   }
 
   /// An info message.
   Future<void> info(String msg) async {
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.info, msg: msg);
   }
 
   /// An info message.
+  ///
+  /// A [context] has to be provided for the message to print on device screen
+  /// If [short] is true it will stay on screen only for 3 seconds, if false
+  /// it will stay until dismissed
   Future<void> infoScreen(String msg,
       {@required BuildContext context, bool short = true}) async {
-    /// A [context] has to be provided for the message to print on device screen
-    /// If [short] is true it will stay on screen only for 3 seconds, if false
-    /// it will stay until dismissed
-    if (msg == null) throw (ArgumentError.notNull());
-    if (context == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
+    if (context == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.info,
         msg: msg, short: short, toScreen: true, context: context);
   }
@@ -161,23 +157,30 @@ class ErrRouter {
   ///
   /// Will stay on the screen for 1 second
   Future<void> infoFlash(String msg) async {
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.info, msg: msg, toScreen: true, flash: true);
   }
 
   /// An debug message
   Future<void> debug(String msg, {dynamic err}) async {
     /// An error or exception can be passed to [err]
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.debug, msg: msg, errorOrException: err);
   }
 
   /// An debug message sent to the screen
+  ///
+  /// An error or exception can be passed to [err]. Will stay until dismissed
+  /// or if [short] is true it will stay for 3 seconds on screen
   Future<void> debugScreen(String msg,
       {@required BuildContext context, dynamic err, bool short = false}) async {
-    /// An error or exception can be passed to [err]. Will stay until dismissed
-    /// or if [short] is true it will stay for 3 seconds on screen
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.debug,
         msg: msg,
         short: short,
@@ -190,14 +193,14 @@ class ErrRouter {
   ///
   /// Will stay on the screen for 1 second
   Future<void> debugFlash(String msg) async {
-    if (msg == null) throw (ArgumentError.notNull());
+    if (msg == null) {
+      throw ArgumentError.notNull();
+    }
     _dispatch(ErrType.debug, toScreen: true, msg: msg, flash: true);
   }
 
   /// An alias for infoFlash
-  Future<void> flash(String msg) async {
-    await infoFlash(msg);
-  }
+  Future<void> flash(String msg) => infoFlash(msg);
 
   void _dispatch(ErrType _errType,
       {BuildContext context,
@@ -207,21 +210,26 @@ class ErrRouter {
       bool flash = false,
       int timeOnScreen = 1,
       bool toScreen = false}) {
-    String _errMsg = _getErrMessage(
+    if (channel == ErrChannel.production) {
+      if (_errType == ErrType.debug) {
+        return;
+      }
+    }
+    final _errMsg = _getErrMessage(
       msg,
       errorOrException,
     );
     if (deviceConsole) {
       _messages.insert(0, _formatErrMsg(_errType, _errMsg));
+      if (_messages.length > maxDeviceConsoleMessages) {
+        _messages.removeLast();
+      }
     }
-    if (_errorRoutes[_errType].contains(ErrRoute.blackHole)) {
-      return null;
-    }
-    if (_errorRoutes[_errType].contains(ErrRoute.console)) {
+    if (channel == ErrChannel.dev) {
       _consoleLog(_errType, _errMsg);
     }
-    if (_errorRoutes[_errType].contains(ErrRoute.screen) && toScreen == true) {
-      _Err err = _buildScreenMessage(_errType, _errMsg, errorOrException,
+    if (toScreen) {
+      final err = _buildScreenMessage(_errType, _errMsg, errorOrException,
           short: short, flash: flash, timeOnScreen: timeOnScreen);
       _popMsg(err: err, context: context);
     }
@@ -232,7 +240,7 @@ class ErrRouter {
       {bool short = false, bool flash = false, int timeOnScreen}) {
     switch (flash) {
       case true:
-        var colors = _getColors(_errType);
+        final colors = _getColors(_errType);
         return _Err(
             msg: _errMsg,
             type: _errType,
@@ -278,42 +286,37 @@ class ErrRouter {
     }
   }
 
-  void _printErr(ErrType _errType, String _errMsg) {
-    String msg = _formatErrMsg(_errType, _errMsg);
-    print(msg);
-  }
+  void _printErr(ErrType _errType, String _errMsg) =>
+      print(_formatErrMsg(_errType, _errMsg));
 
   String _formatErrMsg(ErrType _errType, String _errMsg) {
     String msg;
     switch (_errType) {
       case ErrType.critical:
-        bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
+        final hasBar = _errMsg.length > 65 || _errMsg.contains("\n");
         String endStr;
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
-        String icon;
-        terminalColors ? icon = "✖️ " : icon = "✖️✖️✖️";
+        const icon = "🔴";
         msg = "$icon CRITICAL: $_errMsg$endStr";
         break;
       case ErrType.error:
-        bool hasBar = (_errMsg.length > 65 || _errMsg.contains("\n"));
+        final hasBar = _errMsg.length > 65 || _errMsg.contains("\n");
         String endStr;
-        String icon;
-        terminalColors ? icon = "🔴" : icon = "⏺⏺⏺";
+        const icon = "⭕";
         hasBar ? endStr = "\n➖➖➖➖➖➖➖➖" : endStr = "";
         msg = "$icon ERROR: $_errMsg$endStr";
         break;
       case ErrType.warning:
-        String icon;
-        terminalColors ? icon = "⚠️ " : icon = "⏹ ⚠️";
+        const icon = "❗";
         msg = "$icon WARNING: $_errMsg";
         break;
       case ErrType.info:
-        String icon;
-        terminalColors ? icon = "🔔" : icon = "▶️";
+        const icon = "ℹ️";
         msg = "$icon INFO: $_errMsg";
         break;
       case ErrType.debug:
-        msg = "📞 DEBUG: $_errMsg";
+        const icon = "🔔";
+        msg = "$icon DEBUG: $_errMsg";
         break;
       default:
         msg = "$_errMsg";
@@ -323,12 +326,12 @@ class ErrRouter {
 
   Flushbar _buildFlushbar(ErrType _errType, String _errMsg,
       {bool short = false}) {
-    var colors = _getColors(_errType);
+    final colors = _getColors(_errType);
     IconData _icon;
-    Color _backgroundColor = colors["background_color"];
-    Color _iconColor = Colors.white;
+    final _backgroundColor = colors["background_color"];
+    var _iconColor = Colors.white;
     Color _leftBarIndicatorColor;
-    Color _textColor = colors["text_color"];
+    final _textColor = colors["text_color"];
     switch (_errType) {
       case ErrType.critical:
         _icon = Icons.error;
@@ -352,7 +355,7 @@ class ErrRouter {
         break;
     }
     return Flushbar(
-      duration: short ? Duration(seconds: 5) : Duration(days: 365),
+      duration: short ? const Duration(seconds: 5) : const Duration(days: 365),
       icon: Icon(
         _icon,
         color: _iconColor,
@@ -374,8 +377,8 @@ class ErrRouter {
   }
 
   Map<String, Color> _getColors(ErrType _errType) {
-    Color _backgroundColor = Colors.black;
-    Color _textColor = Colors.white;
+    var _backgroundColor = Colors.black;
+    var _textColor = Colors.white;
     switch (_errType) {
       case ErrType.critical:
         _backgroundColor = Colors.black;
@@ -401,7 +404,7 @@ class ErrRouter {
   }
 
   String _getErrMessage(String _message, dynamic _errorOrException) {
-    String _endMsg = "";
+    var _endMsg = "";
     if (_message != null) {
       _endMsg = _message;
       if (_errorOrException != null) _endMsg += "\n\n";
@@ -453,8 +456,8 @@ class _Err {
     if (flushbar != null) {
       if (context == null) {
         throw ArgumentError(
-            "Pass the context to show if you use anything other " +
-                "than flash messages");
+            "Pass the context to show if you use anything other "
+            "than flash messages");
       }
       flushbar.show(context);
       return;
@@ -466,8 +469,8 @@ class _ShortToast {
   _ShortToast(
       {@required this.backgroundColor,
       @required this.textColor,
-      this.timeOnScreen,
-      @required this.errMsg});
+      @required this.errMsg,
+      this.timeOnScreen});
 
   final Color backgroundColor;
   final Color textColor;
