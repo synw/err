@@ -4,232 +4,150 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 import 'console.dart';
+import 'log.dart';
+import 'models.dart';
 import 'types.dart';
 
 /// The error router
 class ErrRouter {
-  /// The main constructor: provide the [channel]
-  ErrRouter({
-    @required this.channel,
-    this.deviceConsole = false,
-    this.maxDeviceConsoleMessages = 100,
-  }) : _logger =
+  /// The main constructor: provide the [deployementMode]
+  ErrRouter(this.deployementMode)
+      : assert(deployementMode != null),
+        _logger =
             Logger(printer: ConsolePrinter(methodCount: 8, skipMethods: 3));
 
-  /// The error channel
-  ErrChannel channel;
+  /// The app deployement mode
+  DeployementMode deployementMode;
 
-  /// Use the on device console
-  bool deviceConsole;
-
-  /// The maximum number of messages for the on device console
-  int maxDeviceConsoleMessages;
-
+  final ErrLogger _errLogger = ErrLogger();
+  final int _maxDeviceConsoleMessages = 100;
   final Logger _logger;
-  final _messages = <String>[];
+  //final _messages = <String>[];
 
-  /// The logged messages for device console
-  List<String> get messages => _messages;
+  /// The [Err] log history
+  List<Err> get history => _errLogger.errs;
 
-  /// A critical error
+  /// Print an error to the console
   ///
-  /// An error or exception can be passed to [err]
-  Future<void> critical(String msg, {dynamic err}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
+  /// If [err] is not an [Err] it will be
+  /// translated to a string as the message.
+  /// Provide a [String] to just display a message
+  void console(dynamic err) {
+    switch (err is Err) {
+      case true:
+        final _err = err as Err;
+        _dispatch(_err.type,
+            userMsg: _err.userMessage,
+            msg: _err.message,
+            errorOrException: _err.errorOrException);
+        _addErrToErrLogger(_err);
+        break;
+      default:
+        final _msg = "$err";
+        _dispatch(ErrType.debug, msg: _msg);
+        _addStringToErrLogger(_msg, ErrType.debug);
     }
-    _dispatch(ErrType.critical, msg: msg, errorOrException: err);
   }
 
-  /// A critical error
+  /// Display this [Err] to the user screen (flushbar)
   ///
-  /// Will stay on screen until dismissed.
-  /// An error or exception can be passed to [err]
-  Future<void> criticalScreen(String msg,
-      {@required BuildContext context, dynamic err}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
+  /// If [err] is not an [Err] it will be
+  /// translated to a string as the message.
+  /// Provide a [String] to just display a message
+  void screen(dynamic err, BuildContext context) {
+    assert(err != null);
+    switch (err is Err) {
+      case true:
+        final _err = err as Err;
+        _dispatch(_err.type,
+            msg: _err.message,
+            userMsg: _err.userMessage,
+            errorOrException: err.errorOrException,
+            toScreen: true,
+            context: context);
+        _addErrToErrLogger(_err);
+        break;
+      default:
+        final _msg = "$err";
+        _dispatch(ErrType.info, msg: _msg, toScreen: true, context: context);
+        _addStringToErrLogger(_msg, ErrType.info);
     }
-    _dispatch(ErrType.critical,
-        msg: msg, errorOrException: err, toScreen: true, context: context);
   }
 
-  /// An error message
-  Future<void> error(String msg, {dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.error, msg: msg, errorOrException: err);
-  }
-
-  /// An error message
+  /// Flash this [Err] to the user screen (toast)
   ///
-  /// Will stay on screen until dismissed.
-  /// An error or exception can be passed to [err]
-  Future<void> errorScreen(String msg,
-      {@required BuildContext context, dynamic err}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
+  /// If [err] is not an [Err] it will be
+  /// translated to a string as the message.
+  /// Provide a [String] to just display a message
+  /// Limitations: this method only works for mobile
+  void flash(dynamic err) {
+    switch (err is Err) {
+      case true:
+        final _err = err as Err;
+        _dispatch(_err.type,
+            msg: _err.message,
+            userMsg: _err.userMessage,
+            errorOrException: err.errorOrException,
+            toScreen: true,
+            flash: true);
+        _addErrToErrLogger(_err);
+        break;
+      default:
+        final _msg = "$err";
+        _dispatch(ErrType.info, msg: _msg, toScreen: true, flash: true);
+        _addStringToErrLogger(_msg, ErrType.info);
     }
-    _dispatch(ErrType.error,
-        msg: msg, errorOrException: err, context: context, toScreen: true);
   }
 
-  /// A flash error message.
-  ///
-  /// Will stay on screen for 5 seconds
-  Future<void> errorFlash(String msg) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.error,
-        msg: msg, toScreen: true, flash: true, timeOnScreen: 5);
-  }
+  // ********************************
+  //        Private methods
+  // ********************************
 
-  /// A warning from a message.
-  ///
-  /// An error or exception can be passed to [err]
-  Future<void> warning(String msg, {dynamic err}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.warning, msg: msg, errorOrException: err);
-  }
+  void _addErrToErrLogger(Err err) => _errLogger.add(err);
 
-  /// A warning from a message.
-  ///
-  /// Will stay on the screen until dismissed
-  /// A [context] has to be provided for the message to print on device screen
-  /// If [short] is true it will stay on screen only for 3 seconds, if false
-  /// it will stay until dismissed. An error or exception can be passed
-  /// to [err]
-  Future<void> warningScreen(String msg,
-      {@required BuildContext context, dynamic err, bool short = true}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.warning,
-        msg: msg,
-        errorOrException: err,
-        short: short,
-        toScreen: true,
-        context: context);
-  }
-
-  /// A warning flash message.
-  ///
-  /// Will stay on screen for 3 seconds
-  Future<void> warningFlash(String msg) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.warning,
-        msg: msg, toScreen: true, flash: true, timeOnScreen: 3);
-  }
-
-  /// An info message.
-  Future<void> info(String msg) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.info, msg: msg);
-  }
-
-  /// An info message.
-  ///
-  /// A [context] has to be provided for the message to print on device screen
-  /// If [short] is true it will stay on screen only for 3 seconds, if false
-  /// it will stay until dismissed
-  Future<void> infoScreen(String msg,
-      {@required BuildContext context, bool short = true}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    if (context == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.info,
-        msg: msg, short: short, toScreen: true, context: context);
-  }
-
-  /// An info flash message.
-  ///
-  /// Will stay on the screen for 1 second
-  Future<void> infoFlash(String msg) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.info, msg: msg, toScreen: true, flash: true);
-  }
-
-  /// An debug message
-  Future<void> debug(String msg, {dynamic err}) async {
-    /// An error or exception can be passed to [err]
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.debug, msg: msg, errorOrException: err);
-  }
-
-  /// An debug message sent to the screen
-  ///
-  /// An error or exception can be passed to [err]. Will stay until dismissed
-  /// or if [short] is true it will stay for 3 seconds on screen
-  Future<void> debugScreen(String msg,
-      {@required BuildContext context, dynamic err, bool short = false}) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.debug,
-        msg: msg,
-        short: short,
-        toScreen: true,
-        context: context,
-        errorOrException: err);
-  }
-
-  /// An debug flash message from a message.
-  ///
-  /// Will stay on the screen for 1 second
-  Future<void> debugFlash(String msg) async {
-    if (msg == null) {
-      throw ArgumentError.notNull();
-    }
-    _dispatch(ErrType.debug, toScreen: true, msg: msg, flash: true);
-  }
-
-  /// An alias for infoFlash
-  Future<void> flash(String msg) => infoFlash(msg);
+  void _addStringToErrLogger(String msg, ErrType errType) =>
+      _errLogger.add(Err.fromType(msg, errType));
 
   void _dispatch(ErrType _errType,
       {BuildContext context,
       String msg,
+      String userMsg,
       dynamic errorOrException,
       bool short = false,
       bool flash = false,
       int timeOnScreen = 1,
       bool toScreen = false}) {
-    if (channel == ErrChannel.production) {
-      if (_errType == ErrType.debug) {
-        return;
-      }
-    }
     final _errMsg = _getErrMessage(
       msg,
       errorOrException,
     );
-    if (deviceConsole) {
-      _messages.insert(0, _formatErrMsg(_errType, _errMsg));
-      if (_messages.length > maxDeviceConsoleMessages) {
-        _messages.removeLast();
-      }
+    var logToConsole = true;
+    switch (deployementMode) {
+      case DeployementMode.production:
+        if (_errType == ErrType.debug) {
+          return;
+        }
+        logToConsole = false;
+        break;
+      default:
     }
-    if (channel == ErrChannel.dev) {
+    // log to history
+    _errLogger.errs.insert(
+        0, Err.fromType(msg, _errType, errorOrException: errorOrException));
+    if (_errLogger.errs.length > _maxDeviceConsoleMessages) {
+      _errLogger.errs.removeLast();
+    }
+    // console log
+    if (logToConsole) {
       _consoleLog(_errType, _errMsg);
     }
+    // screen log
     if (toScreen) {
-      final err = _buildScreenMessage(_errType, _errMsg, errorOrException,
+      var msg = _errMsg;
+      if (userMsg != null) {
+        msg = userMsg;
+      }
+      final err = _buildScreenMessage(_errType, msg, errorOrException,
           short: short, flash: flash, timeOnScreen: timeOnScreen);
       _popMsg(err: err, context: context);
     }
@@ -354,7 +272,8 @@ class ErrRouter {
         _leftBarIndicatorColor = Colors.black;
         break;
     }
-    return Flushbar(
+    Flushbar flush;
+    flush = Flushbar(
       duration: short ? const Duration(seconds: 5) : const Duration(days: 365),
       icon: Icon(
         _icon,
@@ -373,7 +292,12 @@ class ErrRouter {
         textScaleFactor: 1.6,
       ),
       isDismissible: true,
+      mainButton: FlatButton(
+        child: const Text("Ok"),
+        onPressed: () => flush.dismiss(true),
+      ),
     );
+    return flush;
   }
 
   Map<String, Color> _getColors(ErrType _errType) {

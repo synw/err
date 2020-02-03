@@ -1,3 +1,3 @@
 import 'package:err/err.dart';
 
-var logger = ErrRouter(channel: ErrChannel.dev, deviceConsole: true);
+final ErrRouter log = ErrRouter(DeployementMode.dev);

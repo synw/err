@@ -1,13 +1,16 @@
 /// The error channels
-enum ErrChannel {
+enum DeployementMode {
   /// The developpement channel
   dev,
+
+  /// The beta test channel
+  beta,
 
   /// The production channel
   production
 }
 
-/// The error channels
+/// The type of messages
 enum ErrType {
   /// Critical errors
   critical,

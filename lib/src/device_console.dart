@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'err.dart';
+
+import 'router.dart';
 
 /// On device log page
 class DeviceConsolePage extends StatelessWidget {
-  /// Provide a [logger]
-  const DeviceConsolePage(this.logger);
+  /// Provide an [ErrRouter]
+  const DeviceConsolePage(this.router);
 
   /// The logger to use
-  final ErrRouter logger;
+  final ErrRouter router;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: const Text("Logs")),
         body: ListView.builder(
-          itemCount: logger.messages.length,
+          itemCount: router.history.length,
           itemBuilder: (BuildContext context, int index) {
-            return ListTile(dense: true, title: Text(logger.messages[index]));
+            return ListTile(
+                dense: true, title: Text(router.history[index].toString()));
           },
         ));
   }

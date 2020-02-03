@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
-    logger.debugFlash("Init state");
+    log.console("Init state");
     super.initState();
   }
 
@@ -25,10 +25,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!_firstBuildDone)
-      logger.debugFlash("First build").then((_) {
-        _firstBuildDone = true;
-      });
+    if (!_firstBuildDone) {
+      log.flash("First build");
+    }
+    _firstBuildDone = true;
+
     return Scaffold(
         appBar: AppBar(
           title: const Text("Err"),
@@ -38,7 +39,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 onPressed: () => Navigator.of(context).push<DeviceConsolePage>(
                         MaterialPageRoute<DeviceConsolePage>(
                             builder: (BuildContext context) {
-                      return DeviceConsolePage(logger);
+                      return DeviceConsolePage(log);
                     })))
           ],
         ),
@@ -48,35 +49,30 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 RaisedButton(
                   child: const Text("Info flash message"),
-                  onPressed: () => logger.infoFlash("An info flash message"),
+                  onPressed: () => log.flash("An info flash message"),
                 ),
                 RaisedButton(
-                    child: const Text("Info regular message"),
-                    onPressed: () =>
-                        logger.infoScreen("An info message", context: context)),
-                RaisedButton(
                     child: const Text("Warning message"),
-                    onPressed: () => logger.warningScreen(
-                        "Hey, this is warning!",
-                        context: context)),
+                    onPressed: () => log.screen(
+                        Err.warning("Hey, this is warning!"), context)),
                 RaisedButton(
                     child: const Text("Error message"),
-                    onPressed: () => logger.errorScreen("Something went wrong",
-                        context: context)),
+                    onPressed: () =>
+                        log.screen(Err.error("Something went wrong"), context)),
                 RaisedButton(
                     child: const Text("Critical message from exception"),
                     onPressed: () {
                       try {
                         _doWrong();
                       } catch (e) {
-                        logger.criticalScreen("Something went really wrong",
-                            err: e, context: context);
+                        log.screen(Err.critical("Something went really wrong"),
+                            context);
                       }
                     }),
                 RaisedButton(
                     child: const Text("Debug message"),
-                    onPressed: () => logger.debugScreen("Debug info message",
-                        context: context)),
+                    onPressed: () =>
+                        log.screen(Err.debug("Debug info message"), context)),
               ],
             )));
   }
