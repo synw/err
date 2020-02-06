@@ -1,6 +1,6 @@
 name: err
 author: synw <ansterj@gmail.com>
-description: Error data structure. Structures are available to to use errors as values like in Go
+description: Error data structures for fine-grained control over errors. It is possible to use errors as values like in Go
 homepage: https://github.com/synw/err
 version: 0.8.0
 
@@ -8,6 +8,5 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
-  logger: ^0.8.3
   pedantic: ^1.8.0
   extra_pedantic: ^1.1.1+3
