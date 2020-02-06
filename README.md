@@ -71,7 +71,7 @@ Available error levels:
 
 ### Constructors
 
-All the constructors accept either a string, an exception or an error as input
+All the constructors accept either a `String`, an `Exception` or an `Error` as input
 
    ```dart
    final err = Err.critical("The error message");
