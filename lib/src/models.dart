@@ -117,9 +117,8 @@ class Err {
         _isNil = true;
 
   /// Duplicate with a new user message
-  factory Err.copyWithUserMessage(Err err, String _userMessage) =>
-      Err.fromType(err.exception, err.type,
-          userMessage: _userMessage, date: err.date);
+  Err copyWithUserMessage(String _userMessage) =>
+      Err.fromType(exception, type, userMessage: _userMessage, date: date);
 
   // **************************
   //         Methods
