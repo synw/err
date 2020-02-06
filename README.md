@@ -82,7 +82,7 @@ All the constructors accept either a `String`, an `Exception` or an `Error` as i
    // from a type
    final err = Err.fromType("The error message", ErrType.warning);
    // duplicate an error adding a message for the user
-   final niceErr = Err.copyWithUserMessage(err, "A nice error message")
+   final niceErr = err.copyWithUserMessage("A nice error message")
    ```
 
 The `userMessage` parameter is optional for all constructors
