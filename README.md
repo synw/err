@@ -76,14 +76,16 @@ All the constructors accept either a string, an exception or an error as input
    ```dart
    final err = Err.critical("The error message");
    final err = Err.error("The error message");
-   final err = Err.warning("The warning message");
-   final err = Err.info("The info message");
-   final err = Err.debug("The debug message");
+   final err = Err.info("The info message";
+   final err =
+      Err.warning("The info message", userMessage: "A nice message for the user");
    // from a type
    final err = Err.fromType("The error message", ErrType.warning);
    // duplicate an error adding a message for the user
    final niceErr = Err.copyWithUserMessage(err, "A nice error message")
    ```
+
+The `userMessage` parameter is optional for all constructors
 
 ### Print an error
 
