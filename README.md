@@ -83,6 +83,8 @@ All the constructors accept either a `String`, an `Exception` or an `Error` as i
    final err = Err.fromType("The error message", ErrType.warning);
    // duplicate an error adding a message for the user
    final niceErr = err.copyWithUserMessage("A nice error message")
+   print("Message for the developer: ${niceErr.message}");
+   print("Message for the user: ${niceErr.userMessage}");
    ```
 
 The `userMessage` parameter is optional for all constructors
