@@ -1,21 +1,11 @@
 import 'package:err/err.dart';
-import 'package:flutter/material.dart';
 
 import 'types.dart';
 
 /// An error
 class Err {
-  /// The error message
-  final String message;
-
   /// The error debug message
   final String userMessage;
-
-  /// The function from where the error comes from
-  final Function function;
-
-  /// An error or exception
-  final dynamic errorOrException;
 
   /// The date of the error
   DateTime get date => _date;
@@ -23,131 +13,213 @@ class Err {
   /// The error type
   ErrType get type => _type;
 
+  /// Get an exception from the message
+  Exception get exception => Exception(_message);
+
+  /// Get the message
+  String get message => _message;
+
   /// Is the error empty
   bool get isNil => _isNil;
 
   final DateTime _date;
   final ErrType _type;
   final bool _isNil;
+  final String _message;
+  final Error _error;
+
+  // **************************
+  //        Constructors
+  // **************************
 
   /// Critical constructor
   ///
-  /// Provide a [message] , optionally an [Error] or [Exception]
+  /// Provide a message or an exception
   /// and optionaly provide the [function] that caused
   /// the error. The [date] of the error is automatically set
-  Err.critical(this.message,
-      {this.userMessage, this.errorOrException, this.function})
-      : assert(message != null),
+  Err.critical(dynamic e, {this.userMessage})
+      : assert(e != null),
         _type = ErrType.critical,
         _date = DateTime.now(),
-        _isNil = false;
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
   /// Error constructor
   ///
-  /// Provide a [message] , optionally an [Error] or [Exception]
+  /// Provide a message or an exception
   /// and optionaly provide the [function] that caused
   /// the error. The [date] of the error is automatically set
-  Err.error(this.message,
-      {this.userMessage, this.errorOrException, this.function})
-      : assert(message != null),
+  Err.error(dynamic e, {this.userMessage})
+      : assert(e != null),
         _type = ErrType.error,
         _date = DateTime.now(),
-        _isNil = false;
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
   /// Warning constructor
   ///
-  /// Provide a [message] , optionally an [Error] or [Exception]
+  /// Provide a message or an exception
   /// and optionaly provide the [function] that caused
   /// the error. The [date] of the error is automatically set
-  Err.warning(this.message,
-      {this.userMessage, this.errorOrException, this.function})
-      : assert(message != null),
+  Err.warning(dynamic e, {this.userMessage})
+      : assert(e != null),
         _type = ErrType.warning,
         _date = DateTime.now(),
-        _isNil = false;
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
   /// Info constructor
   ///
-  /// Provide a [message] , optionally an [Error] or [Exception]
+  /// Provide a message or an exception
   /// and optionaly provide the [function] that caused
   /// the error. The [date] of the error is automatically set
-  Err.info(this.message,
-      {this.userMessage, this.errorOrException, this.function})
-      : assert(message != null),
+  Err.info(dynamic e, {this.userMessage})
+      : assert(e != null),
         _type = ErrType.info,
         _date = DateTime.now(),
-        _isNil = false;
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
   /// Debug constructor
   ///
-  /// Provide a [message] , optionally an [Error] or [Exception]
+  /// Provide a message or an exception
   /// and optionaly provide the [function] that caused
   /// the error. The [date] of the error is automatically set
-  Err.debug(this.message,
-      {this.userMessage, this.errorOrException, this.function})
-      : assert(message != null),
+  Err.debug(dynamic e, {this.userMessage})
+      : assert(e != null),
         _type = ErrType.debug,
         _date = DateTime.now(),
-        _isNil = false;
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
-  /// Build an error from an [ErrType] and message
-  Err.fromType(this.message, ErrType errType,
-      {this.userMessage,
-      this.errorOrException,
-      this.function,
-      DateTime dateTime})
-      : assert(message != null),
+  /// Build an error from an [ErrType] and message or exception
+  Err.fromType(dynamic e, ErrType errType, {this.userMessage, DateTime date})
+      : assert(e != null),
         assert(errType != null),
         _type = errType,
-        _date = dateTime ?? DateTime.now(),
-        _isNil = false;
+        _date = date ?? DateTime.now(),
+        _isNil = false,
+        _message = _getMessageFromInput(e),
+        _error = _getError(e);
 
   /// An empty error
   const Err.nil()
       : _type = null,
         _date = null,
-        function = null,
-        errorOrException = null,
+        _message = null,
+        _error = null,
         userMessage = null,
-        message = null,
         _isNil = true;
 
   /// Duplicate with a new user message
-  factory Err.duplicateWithUserMessage(Err err, String _userMessage) =>
-      Err.fromType(err.message, err.type,
-          userMessage: _userMessage,
-          function: err.function,
-          errorOrException: err.errorOrException,
-          dateTime: err.date);
+  factory Err.copyWithUserMessage(Err err, String _userMessage) =>
+      Err.fromType(err.exception, err.type,
+          userMessage: _userMessage, date: err.date);
 
-  /// Push the error to the screen if it exists
-  void catchToScreen(ErrRouter router, BuildContext context) {
-    if (message != null) {
-      router.screen(this, context);
+  // **************************
+  //         Methods
+  // **************************
+
+  /// Print this error to the console
+  void console() => _consoleLog();
+
+  /// Throw an exception from this error
+  void raise() => throw exception;
+
+  /// Static method to print an error or message to the console
+  static void log(dynamic err) {
+    if (err is Err) {
+      err.console();
+    } else {
+      Err.debug("$err").console();
     }
   }
 
   @override
-  String toString() {
-    var msg = "$date : $message";
-    if (function != null) {
-      msg += " from $function";
+  String toString() => "$date : $_message";
+
+  // **************************
+  //      Private methods
+  // **************************
+
+  static String _getMessageFromInput(dynamic e) {
+    String _msg;
+    if (e is Exception) {
+      _msg = "$e";
+    } else if (e is String) {
+      _msg = e;
+    } else if (e is Error) {
+      _msg = "$e";
+    } else {
+      throw ArgumentError(
+          "Please provide either and exception, an error or a message");
+    }
+    return _msg;
+  }
+
+  static Error _getError(dynamic _e) {
+    Error _er;
+    if (_e is Error) {
+      _er = _e;
+    }
+    return _er;
+  }
+
+  void _consoleLog() => print(_formatMsg());
+
+  String _formatMsg() {
+    String msg;
+    const bar = "➖➖➖➖➖➖➖➖";
+    switch (type) {
+      case ErrType.critical:
+        const icon = "🔴";
+        msg = "$bar\n$icon CRITICAL: $_message";
+        if (_error != null) {
+          msg += "\n${_error.stackTrace}";
+        } else {
+          msg += "\n";
+        }
+        msg += "$bar";
+        break;
+      case ErrType.error:
+        const icon = "⭕";
+        msg = "$bar\n$icon ERROR: $_message";
+        if (_error != null) {
+          msg += "\n${_error.stackTrace}";
+        } else {
+          msg += "\n";
+        }
+        msg += "$bar";
+        break;
+      case ErrType.warning:
+        const icon = "❗";
+        msg = "$icon WARNING: $_message";
+        break;
+      case ErrType.info:
+        const icon = "ℹ️";
+        msg = "$icon  INFO: $_message";
+        break;
+      case ErrType.debug:
+        const icon = "🔔";
+        msg = "$icon DEBUG: $_message";
+        if (_error != null) {
+          msg += "\n${_error.stackTrace}";
+        }
+        break;
+      default:
+        msg = "$_message";
     }
     return msg;
   }
 }
 
-/// A typed return value with an eror slot
+/// A typed return value with an error slot
 class ErrPack<T> {
-  /// Default constructor
-  //const ErrPack(this.err, this.value);
-
-  /// Construtor for a return without error
-  const ErrPack.ok(this.value) : err = const Err.nil();
-
-  /// Construtor for a return without error
-  const ErrPack.error(this.err) : value = null;
-
   /// The return value
   final T value;
 
@@ -166,10 +238,31 @@ class ErrPack<T> {
     return true;
   }
 
-  /// Push the error to the screen if it exists
-  void catchToScreen(ErrRouter router, BuildContext context) {
+  /// Constructor for a return value without error
+  const ErrPack.ok(this.value)
+      : assert(value != null),
+        err = const Err.nil();
+
+  /// Constructor for a null return value without error
+  const ErrPack.nullOk()
+      : value = null,
+        err = const Err.nil();
+
+  /// Constructor for a return error
+  const ErrPack.err(this.err)
+      : assert(err != null),
+        value = null;
+
+  /// Print the error to the console
+  void log() => err._consoleLog();
+
+  /// Throw an exception from the [Err]
+  void raise() => err.raise();
+
+  /// Throw an exception if an error is present
+  void throwIfError() {
     if (hasError) {
-      router.screen(err, context);
+      err.raise();
     }
   }
 }

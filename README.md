@@ -2,136 +2,140 @@
 
 [![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err) [![api doc](img/api-doc.svg)](https://pub.dartlang.org/documentation/err/latest/err/err-library.html)
 
-A logs router. The messages can be routed to:
+Error data structures. Use errors as values like in Go
 
-- Terminal
-- Flash messages
-- Snackbar messages
-
-## Configuration
-
-Configure the log levels's routes: available routes: console, screen, notifications or black hole. All the logs routed to the black hole will be silently swallowed: use it this to disable a route. 
-
-All routes default to console.
+## The Err class
 
    ```dart
    import 'package:err/err.dart';
 
-   var logger = ErrRouter(
-      criticalRoute: [ErrRoute.console, ErrRoute.screen],
-      errorRoute: [ErrRoute.screen, ErrRoute.console],
-      warningRoute: [ErrRoute.screen, ErrRoute.console],
-      infoRoute: [ErrRoute.screen],
-      debugRoute: [ErrRoute.blackHole]);
-   ```
+   // Create an error:
+   final err = Err.error("An error has occured");
 
-## Screen route
-
-### Flash messages
-
-The flash messages are toast messages. They stay one second on the screen
-
-   ```dart
-   @override
-   void initState() {
-      logger.debugFlash("Init state");
-       super.initState();
+   // Use with a function as return value 
+   Err theFunction() {
+     try {
+       // something wrong
+     } catch (e) {
+       return Err.error(e);
+     }
+     return null;
+     // or to not use a null value return an empty error object
+     return Err.nil();
    }
    ```
 
-Available flash messages:
-
-**`infoFlash`**(`String` *msg*): an information message. Stays for 1 second on screen.
-
-**`debugFlash`**(`String` *msg*): a debug message. Stays for 1 second on screen.
-
-**`warningFlash`**(`String` *msg*): a warning message. Stays for 3 seconds on screen.
-
-**`errorFlash`**(`String` *msg*): an error message. Stays for 5 seconds on screen.
-
-**`flash`**(`String` *msg*): alias for `debugFlash`
-
-![Screenshot](img/info_flash.png)
-
-### Snackbar messages
-
-The snackbar messages need a `BuildContext`
+Check the error:
 
    ```dart
-   logger.infoScreen("File uploaded in $elapsed s", context: context);
-   logger.debugScreen("A debug message", context: context);
-   try {
-      somethingWrong();
-   } catch(ex) {
-      logger.criticalScreen(
-         err: ex,
-         msg: "Something wrong happened",
-         context: context);  
+   final err = theFunction();
+   if (err != null) {
+      // print the error to the console
+      err.console();
+      // throw an exception from the error
+      err.raise();
+   }
+   // or if not using null values
+   if (!err.isNil) {
+      print("${err.date} ${err.type} : ${err.message}");
    }
    ```
 
-#### Available messages
-
-**`criticalScreen`**(`String` *msg*, {`@required BuildContext` *context*, `dynamic` *err*})
-
-**`errorScreen`**(`String` *msg*, {`@required BuildContext` *context*, `dynamic` *err*})
-
-**`warningScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
-
-**`infoScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
-
-**`debugScreen`**(`String` *msg*, {`@required BuildContext` *context*,`dynamic` *err*, `bool` *short*})
-
-#### Parameters:
-
-**msg** : a text message
-
-**err** : an error or exception
-
-**short** : if enabled the message will stay on screen for 5 seconds. If not it will stay until dismissed
-
-**context** : the build context required for screen messages
-
-![Screenshot](img/messages.png)
-
-## Console route
-
-**`critical`**(`String` *msg*, {`dynamic` *err*})
-
-**`error`**(`String` *msg*)
-
-**`warning`**(`String` *msg*, {`dynamic` *err*})
-
-**`info`**(`String` *msg*)
-
-**`debug`**(`String` *msg*, {`dynamic` *err*})
-
-![Screenshot](img/terminal.png)
-
-By default the terminal output is configured for black and white. If your terminal supports colorized unicode emoticons use this parameter:
+### Data structure:
 
    ```dart
-   var logger = ErrRouter(
-      // ...
-      terminalColors: true);
+   /// An error message for the user
+   final String userMessage;
+ 
+   /// The date of the error
+   DateTime get date;
+ 
+   /// The error type
+   ErrType get type;
+ 
+   /// Get an exception from the message
+   Exception get exception;
+ 
+   /// Get the message
+   String get message;
+ 
+   /// Is the error empty
+   bool get isNil;
    ```
 
-![Screenshot](img/terminal_colors.png)
+Available error levels:
 
-## On device console
+   ```dart
+   enum ErrType { critical, error, warning, info, debug }
+   ```
 
-A console log is available on the device. To enable it:
+### Constructors
 
-```dart
-ErrRouter(
-    // ...
-    deviceConsole: true
-)
-```
+All the constructors accept either a string, an exception or an error as input
 
-Navigate to `DeviceConsolePage(logger)` to see the console on the device
+   ```dart
+   final err = Err.critical("The error message");
+   final err = Err.error("The error message");
+   final err = Err.warning("The warning message");
+   final err = Err.info("The info message");
+   final err = Err.debug("The debug message");
+   // from a type
+   final err = Err.fromType("The error message", ErrType.warning);
+   // duplicate an error adding a message for the user
+   final niceErr = Err.copyWithUserMessage(err, "A nice error message")
+   ```
 
-## Libraries used
+### Print an error
 
-- [Flutter toast](https://pub.dartlang.org/packages/fluttertoast)
-- [Flushbar](https://pub.dartlang.org/packages/flushbar)
+Print an error to console, similar to `console.log` in javascript:
+
+   ```dart
+   /// print an instance
+   err.console();
+   /// print from a string or an [Err]
+   Err.log("An error");
+   ```
+
+## Error as values
+
+A data structure is available to pass return values of functions with errors: the `ÈrrPack` class:
+
+   ```dart
+   import 'package:err/err.dart';
+   
+   ErrPack<int> _someFunctionThatReturnsAnInt() {
+     try {
+       throw Exception("Oops");
+     } catch (e) {
+       // return an error and no value
+       return ErrPack.err(Err.warning(e));
+     }
+     // return no error and a integer value
+     return const ErrPack.ok(1);
+   }
+   
+   ErrPack<Null> _someFunctionThatReturnsNull() {
+     try {
+       // ok
+     } catch (e) {
+       // return an error and no value
+       return ErrPack.err(Err.debug("Something went wrong"));
+     }
+     // return no error and a null value
+     return const ErrPack.nullOk();
+   }
+   
+   void main() {
+     _someFunctionThatReturnsNull().throwIfError();
+     // or
+     final res = _someFunctionThatReturnsAnInt();
+     if (res.hasError) {
+       // print the error
+       res.log();
+       // throw
+       res.raise();
+     }
+     // get the return value
+     final int i = res.value;
+   }
+   ```
