@@ -21,7 +21,7 @@ Error data structures for fine-grained control over errors. It is possible to us
      }
      return null;
      // or to not use a null value return an empty error object
-     return Err.nil();
+     return const Err.nil();
    }
    ```
 
@@ -110,7 +110,7 @@ A data structure is available to pass return values of functions with errors: th
        throw Exception("Oops");
      } catch (e) {
        // return an error and no value
-       return ErrPack.err(Err.warning(e));
+       return const ErrPack.err(Err.warning(e));
      }
      // return no error and a integer value
      return const ErrPack.ok(1);
@@ -121,7 +121,7 @@ A data structure is available to pass return values of functions with errors: th
        // ok
      } catch (e) {
        // return an error and no value
-       return ErrPack.err(Err.debug("Something went wrong"));
+       return const ErrPack.err(Err.debug("Something went wrong"));
      }
      // return no error and a null value
      return const ErrPack.nullOk();
