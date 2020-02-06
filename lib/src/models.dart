@@ -116,13 +116,13 @@ class Err {
         userMessage = null,
         _isNil = true;
 
-  /// Duplicate with a new user message
-  Err copyWithUserMessage(String _userMessage) =>
-      Err.fromType(exception, type, userMessage: _userMessage, date: date);
-
   // **************************
   //         Methods
   // **************************
+
+  /// Duplicate with a new user message
+  Err copyWithUserMessage(String _userMessage) =>
+      Err.fromType(exception, type, userMessage: _userMessage, date: date);
 
   /// Print this error to the console
   void console() => _consoleLog();
