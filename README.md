@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/err.svg)](https://pub.dartlang.org/packages/err) [![api doc](img/api-doc.svg)](https://pub.dartlang.org/documentation/err/latest/err/err-library.html)
 
-Error data structures. Use errors as values like in Go
+Error data structures. Provide fine grained control over errors. It is possible to use errors as values like in Go
 
 ## The Err class
 
