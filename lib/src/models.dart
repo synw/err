@@ -22,6 +22,9 @@ class Err {
   /// Is the error empty
   bool get isNil => _isNil;
 
+  /// Is the error empty
+  bool get isNotNil => !_isNil;
+
   final DateTime _date;
   final ErrType _type;
   final bool _isNil;
@@ -129,6 +132,20 @@ class Err {
 
   /// Throw an exception from this error
   void raise() => throw exception;
+
+  /// Throw an exception if an error is present
+  void throwIfNotNil() {
+    if (isNotNil) {
+      raise();
+    }
+  }
+
+  /// Log the to console if an error is present
+  void logIfNotNil() {
+    if (isNotNil) {
+      _consoleLog();
+    }
+  }
 
   /// Static method to print an error or message to the console
   static void log(dynamic err) {
