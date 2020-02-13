@@ -1,5 +1,4 @@
 name: err
-author: synw <ansterj@gmail.com>
 description: Error data structures for fine-grained control over errors. It is possible to use errors as values like in Go
 homepage: https://github.com/synw/err
 version: 0.9.0
