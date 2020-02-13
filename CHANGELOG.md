@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.9.0
+
+**Breaking change**: major refactor. This package now only contains the basic data structures.
+The Flutter router part has been moved to it's own package.
+
 ## 0.8.0
 
 - Add an errorFlash method
