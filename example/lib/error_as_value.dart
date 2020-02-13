@@ -8,10 +8,10 @@ ErrPack<int> _someFunctionThatReturnsAnInt() {
     return ErrPack.err(Err.warning(e));
   }
   // return no error and a integer value
-  return const ErrPack.ok(1);
+  //return const ErrPack.ok(1);
 }
 
-ErrPack<Null> _someFunctionThatReturnsNull() {
+ErrPack<void> _someFunctionThatReturnsNull() {
   try {
     // ok
   } catch (e) {
@@ -34,5 +34,6 @@ void main() {
   print("- Throw the error returned by the function:");
   _someFunctionThatReturnsAnInt().throwIfError();
   // get the return value
-  final int i = res.value;
+  final i = res.value;
+  print(i);
 }
