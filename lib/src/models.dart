@@ -45,7 +45,7 @@ class Err {
         _type = ErrType.critical,
         _date = DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// Error constructor
@@ -58,7 +58,7 @@ class Err {
         _type = ErrType.error,
         _date = DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// Warning constructor
@@ -71,7 +71,7 @@ class Err {
         _type = ErrType.warning,
         _date = DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// Info constructor
@@ -84,7 +84,7 @@ class Err {
         _type = ErrType.info,
         _date = DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// Debug constructor
@@ -97,7 +97,7 @@ class Err {
         _type = ErrType.debug,
         _date = DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// Build an error from an [ErrType] and message or exception
@@ -107,7 +107,7 @@ class Err {
         _type = errType,
         _date = date ?? DateTime.now(),
         _isNil = false,
-        _message = _getMessageFromInput(e),
+        _message = "$e",
         _error = _getError(e);
 
   /// An empty error
