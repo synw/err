@@ -6,9 +6,13 @@ void _someErrs() {
   final i = Err.info("An info message");
   final d = Err.debug("A debug message");
   // print
+  print("Some message");
   e.console();
+  print("Some other message");
   i.console();
+  print("Some other message");
   d.console();
+  print("Some other message");
   w.console();
   // throw
   print("A problem occurs");
