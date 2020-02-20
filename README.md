@@ -4,6 +4,8 @@
 
 Error data structures for fine-grained control over errors. It is possible to use errors as values like in Go
 
+![Screenshot](https://raw.githubusercontent.com/synw/err_router/master/img/console.png)
+
 ## The Err class
 
    ```dart
