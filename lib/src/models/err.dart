@@ -1,11 +1,20 @@
 import 'package:err/err.dart';
+import 'package:hive/hive.dart';
+import 'package:meta/meta.dart';
+import 'package:enum_to_string/enum_to_string.dart';
 
-import 'types.dart';
+import '../types.dart';
+
+Box<Map<dynamic, dynamic>> _box;
 
 /// An error
+@immutable
 class Err {
   /// The error debug message
   final String userMessage;
+
+  /// Get the message
+  String get message => _message;
 
   /// The date of the error
   DateTime get date => _date;
@@ -15,9 +24,6 @@ class Err {
 
   /// Get an exception from the message
   Exception get exception => Exception(_message);
-
-  /// Get the message
-  String get message => _message;
 
   /// Is the error empty
   bool get isNil => _isNil;
@@ -30,6 +36,8 @@ class Err {
   final bool _isNil;
   final String _message;
   final Error _error;
+
+  bool get _storeData => _box != null;
 
   // **************************
   //        Constructors
@@ -45,8 +53,12 @@ class Err {
         _type = ErrType.critical,
         _date = DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData) {
+      _box.add(toJson());
+    }
+  }
 
   /// Error constructor
   ///
@@ -58,8 +70,12 @@ class Err {
         _type = ErrType.error,
         _date = DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData) {
+      _box.add(toJson());
+    }
+  }
 
   /// Warning constructor
   ///
@@ -71,8 +87,12 @@ class Err {
         _type = ErrType.warning,
         _date = DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData) {
+      _box.add(toJson());
+    }
+  }
 
   /// Info constructor
   ///
@@ -84,8 +104,12 @@ class Err {
         _type = ErrType.info,
         _date = DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData) {
+      _box.add(toJson());
+    }
+  }
 
   /// Debug constructor
   ///
@@ -97,18 +121,27 @@ class Err {
         _type = ErrType.debug,
         _date = DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData) {
+      _box.add(toJson());
+    }
+  }
 
   /// Build an error from an [ErrType] and message or exception
-  Err.fromType(dynamic e, ErrType errType, {this.userMessage, DateTime date})
+  Err.fromType(dynamic e, ErrType errType,
+      {this.userMessage, DateTime date, bool disableStorage = false})
       : assert(e != null),
         assert(errType != null),
         _type = errType,
         _date = date ?? DateTime.now(),
         _isNil = false,
-        _message = "$e",
-        _error = _getError(e);
+        _message = _getMessageFromInput(e),
+        _error = _getError(e) {
+    if (_storeData && !disableStorage) {
+      _box.add(toJson());
+    }
+  }
 
   /// An empty error
   const Err.nil()
@@ -124,8 +157,8 @@ class Err {
   // **************************
 
   /// Duplicate with a new user message
-  Err copyWithUserMessage(String _userMessage) =>
-      Err.fromType(exception, type, userMessage: _userMessage, date: date);
+  Err copyWithUserMessage(String _userMessage) => Err.fromType(exception, type,
+      userMessage: _userMessage, date: date, disableStorage: true);
 
   /// Print this error to the console
   void console() => _consoleLog();
@@ -147,6 +180,22 @@ class Err {
     }
   }
 
+  /// Json serializer
+  Map<dynamic, dynamic> toJson() => <dynamic, dynamic>{
+        "message": message,
+        "date": date.millisecondsSinceEpoch,
+        "type": EnumToString.parse(type),
+        "user_message": userMessage,
+      };
+
+  /// Json deserializer
+  factory Err.fromJson(Map<dynamic, dynamic> map) => Err.fromType(
+      map["message"].toString(),
+      EnumToString.fromString(ErrType.values, map["type"].toString()),
+      date: DateTime.fromMillisecondsSinceEpoch(
+          int.parse(map["date"].toString())),
+      userMessage: map["user_message"].toString());
+
   /// Static method to print an error or message to the console
   static void log(dynamic err) {
     if (err is Err) {
@@ -154,6 +203,40 @@ class Err {
     } else {
       Err.debug("$err").console();
     }
+  }
+
+  // ********** storage **********
+
+  /// Configure the storage
+  static Future<void> enableStorage(
+      {Box<Map<dynamic, dynamic>> box, String storagePath}) async {
+    if (box == null && storagePath == null) {
+      throw ArgumentError("Provide either a box or a storage path");
+    }
+    var b = box;
+    if (box == null) {
+      Hive.init(storagePath);
+      b = await Hive.openBox<Map<dynamic, dynamic>>("err");
+    }
+    _box = b;
+  }
+
+  /// Clear the storage
+  static Future<void> clearStorage() async {
+    assert(_box != null);
+    await _box.clear();
+  }
+
+  /// Select the last n errs from storage
+  static Future<List<Err>> select({int number = 30}) async {
+    assert(_box != null);
+    final errs = <Err>[];
+    final len = _box.keys.length;
+    final start = ((number - 1) > len) ? 0 : (number - 1) - len;
+    _box
+        .valuesBetween(startKey: start, endKey: len - 1)
+        .forEach((v) => errs.add(Err.fromJson(v)));
+    return errs;
   }
 
   @override
@@ -231,54 +314,5 @@ class Err {
         msg = "$_message";
     }
     return msg;
-  }
-}
-
-/// A typed return value with an error slot
-class ErrPack<T> {
-  /// The return value
-  final T value;
-
-  /// The error
-  final Err err;
-
-  /// Check if there is an error
-  bool get hasError {
-    if (err != null) {
-      if (err.isNil) {
-        return false;
-      }
-    } else {
-      return false;
-    }
-    return true;
-  }
-
-  /// Constructor for a return value without error
-  const ErrPack.ok(this.value)
-      : assert(value != null),
-        err = const Err.nil();
-
-  /// Constructor for a null return value without error
-  const ErrPack.nullOk()
-      : value = null,
-        err = const Err.nil();
-
-  /// Constructor for a return error
-  const ErrPack.err(this.err)
-      : assert(err != null),
-        value = null;
-
-  /// Print the error to the console
-  void log() => err._consoleLog();
-
-  /// Throw an exception from the [Err]
-  void raise() => err.raise();
-
-  /// Throw an exception if an error is present
-  void throwIfError() {
-    if (hasError) {
-      err.raise();
-    }
   }
 }
