@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+Update dependencies
+
 ## 0.9.0
 
 **Breaking change**: major refactor. This package now only contains the basic data structures.
