@@ -1,5 +1,6 @@
 name: err
-description: Error data structures for fine-grained control over errors. It is possible to use errors as values like in Go
+description: Error data structures for fine-grained control over errors. It is
+  possible to use errors as values like in Go
 homepage: https://github.com/synw/err
 version: 0.9.0
 
@@ -7,8 +8,8 @@ environment:
   sdk: ">=2.3.0 <3.0.0"
 
 dependencies:
-  pedantic: ^1.8.0
-  extra_pedantic: ^1.1.1+3
-  meta: ^1.1.8
-  enum_to_string: ^1.0.9
-  hive: ^1.4.1+1
+  enum_to_string: ^1.0.14
+  extra_pedantic: ^1.2.0
+  hive: ^1.4.4+1
+  meta: ^1.2.4
+  pedantic: ^1.9.2
